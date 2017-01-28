@@ -14,38 +14,40 @@ def sanity():
     check_sanity()
 
 @manager.command
+def passwd(username, password=None):
+    """
+    Change a user's password
+    """
+    from app.user.models import User
+    from getpass import getpass
+
+    try:
+        user = User.from_ldap(username)
+    except LookupError:
+        app.logger.fatal("User does not exist: %d", dn)
+    else:
+        if password is None:
+            password = getpass('New password: ')
+            if (getpass('Repeat password: ') != password):
+                raise Exception("Paswords were not equal")
+
+        user.change_password(password)
+        return user
+
+@manager.command
 def create_user(uid, givenName, sn, password=None):
     """
     Create a user
     """
-    from ldap3 import ObjectDef, Reader, Writer
-    from ldap3.core.exceptions import LDAPNoSuchObjectResult
-    from ldap3.utils.hashed import hashed
+    from app.user.models import User
     from getpass import getpass
-
-    conn = app.ldap3_login_manager.connection
-    userbase = "%s,%s"%(app.config['LDAP_USER_DN'], app.config['LDAP_BASE_DN'])
-    dn = "uid=%s,%s" %(uid,userbase)
 
     if password is None:
         password = getpass('New password: ')
         if (getpass('Repeat password: ') != password):
             raise Exception("Paswords were not equal")
 
-    obj_account = ObjectDef(['inetOrgPerson','simpleSecurityObject'], conn)
-    r = Reader(conn, obj_account, userbase)
-    try:
-        r.search()
-    except LDAPNoSuchObjectResult:
-        pass
-
-    w = Writer.from_cursor(r)
-    user = w.new(dn)
-    user.sn = sn
-    user.givenName = givenName
-    user.cn = "%s %s" % ( givenName, sn )
-    user.userPassword = hashed(app.config['PASSWORD_HASHING_FUNC'], password)
-    w.commit()
+    return User.create(uid, givenName, sn, password)
 
 if __name__ == "__main__":
     if app.config['MOCKSERVER'] == True:

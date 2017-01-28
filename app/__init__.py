@@ -1,6 +1,4 @@
 from flask import Flask, current_app
-from flask_login import LoginManager
-from flask_ldap3_login import LDAP3LoginManager
 from config import config
 import logging
 
@@ -21,26 +19,9 @@ def create_app(profile="default"):
     except:
         pass
 
-
-    login_manager = LoginManager(app)
-    ldap_manager = LDAP3LoginManager(app)
-
-    app.users = {}
-    @login_manager.user_loader
-    def load_user(id):
-        if id in app.users:
-            return app.users[id]
-        return None
-
-    @ldap_manager.save_user
-    def save_user(dn, username, data, memberships):
-        user = models.User(dn, username, data)
-        app.logger.info("saving user %r" % ((dn, username, data),))
-        app.users[dn] = user
-        return user
-
-    from app.user import user_blueprint
+    from app.user import user_blueprint, init_app as init_user
     app.register_blueprint(user_blueprint)
+    init_user(app)
 
     from app.oauth2 import oauth2_blueprint, init_app as init_oauth2
     app.register_blueprint(oauth2_blueprint)
