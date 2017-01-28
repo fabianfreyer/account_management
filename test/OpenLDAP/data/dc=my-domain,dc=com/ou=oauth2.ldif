@@ -1,0 +1,13 @@
+# AUTO-GENERATED FILE - DO NOT EDIT!! Use ldapmodify.
+# CRC32 b4980053
+dn: ou=oauth2
+objectClass: organizationalUnit
+ou: oauth2
+description: Automagically added by quasisentient sanity checks
+structuralObjectClass: organizationalUnit
+entryUUID: a03439ba-6c63-403c-84e6-e6403d88cd83
+creatorsName: uid=bind,dc=my-domain,dc=com
+createTimestamp: 20170128150251Z
+entryCSN: 20170128150251.906672Z#000000#000#000000
+modifiersName: uid=bind,dc=my-domain,dc=com
+modifyTimestamp: 20170128150251Z

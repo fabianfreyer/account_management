@@ -1,0 +1,3 @@
+[submodule "vendor/openid-connect-ldap-schema"]
+	path = vendor/openid-connect-ldap-schema
+	url = https://plonk@bitbucket.org/plonk/openid-connect-ldap-schema.git

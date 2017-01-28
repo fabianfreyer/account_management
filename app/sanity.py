@@ -26,6 +26,25 @@ def check_userbase_exists(fix=True):
             base.description = "Automagically added by quasisentient sanity checks"
             w.commit()
 
+def check_oauthbase_exists(fix=True):
+    """
+    Check the oauth2 base DN exists, and if not, create it
+    """
+    conn = current_app.ldap3_login_manager.connection
+    ou = ObjectDef('organizationalunit', conn)
+    r = Reader(conn, ou, current_app.config['LDAP_OAUTH2_CLIENT_DN'])
+    userbase = "%s,%s"%(current_app.config['LDAP_OAUTH2_CLIENT_DN'],
+            current_app.config['LDAP_BASE_DN'])
+    try:
+        base = r.search_object(userbase)
+    except LDAPNoSuchObjectResult:
+        current_app.logger.error("Oauth2 client DN does not exist: %s" % userbase)
+        if fix:
+            current_app.logger.info("Attempting to fix...")
+            w = Writer.from_cursor(r)
+            base = w.new(userbase)
+            base.description = "Automagically added by quasisentient sanity checks"
+            w.commit()
 
 def check_hashfunc(fix=True):
     from ldap3 import HASHED_NONE, HASHED_MD5, HASHED_SALTED_MD5, HASHED_SALTED_SHA, HASHED_SALTED_SHA256, \

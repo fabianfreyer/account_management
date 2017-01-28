@@ -42,6 +42,10 @@ def create_app(profile="default"):
     from app.user import user_blueprint
     app.register_blueprint(user_blueprint)
 
+    from app.oauth2 import oauth2_blueprint, init_app as init_oauth2
+    app.register_blueprint(oauth2_blueprint)
+    init_oauth2(app)
+
     return app
 
 def check_sanity(fix=True):

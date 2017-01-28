@@ -9,6 +9,7 @@ class Config:
     LDAP_BASE_DN = 'dc=my-domain,dc=com'
     LDAP_USER_DN = 'ou=users'
     LDAP_GROUP_DN = 'ou=groups'
+    LDAP_OAUTH2_CLIENT_DN = 'ou=oauth2'
     LDAP_BIND_USER_DN = 'uid=bind,dc=my-domain,dc=com'
     LDAP_BIND_USER_PASSWORD = 'bind123'
     LDAP_USER_RDN_ATTR = 'uid'
