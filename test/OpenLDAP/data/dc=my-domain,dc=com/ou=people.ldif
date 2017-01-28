@@ -1,0 +1,14 @@
+# AUTO-GENERATED FILE - DO NOT EDIT!! Use ldapmodify.
+# CRC32 75ca6314
+dn: ou=people
+ou: People
+objectClass: top
+objectClass: organizationalUnit
+description: Parent object of all UNIX accounts
+structuralObjectClass: organizationalUnit
+entryUUID: af4ad2b3-368e-4311-a0e9-f78abff1aa69
+creatorsName: uid=root,dc=my-domain,dc=com
+createTimestamp: 20170128170842Z
+entryCSN: 20170128170842.781547Z#000000#000#000000
+modifiersName: uid=root,dc=my-domain,dc=com
+modifyTimestamp: 20170128170842Z

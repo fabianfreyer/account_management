@@ -1,0 +1,16 @@
+# AUTO-GENERATED FILE - DO NOT EDIT!! Use ldapmodify.
+# CRC32 0a9329e8
+dn: uid=bind
+uid: bind
+objectClass: top
+objectClass: simpleSecurityObject
+objectClass: account
+userPassword:: e1NTSEF9ai9wdUloU3QzQ2NNcTdzbkNwTjVTa3RhUXhMZVNKTEQ=
+description: Bind user
+structuralObjectClass: account
+entryUUID: 05c3d1e3-ad30-4aeb-86b5-a0a8367a5850
+creatorsName: uid=root,dc=my-domain,dc=com
+createTimestamp: 20170128170842Z
+entryCSN: 20170128170842.782606Z#000000#000#000000
+modifiersName: uid=root,dc=my-domain,dc=com
+modifyTimestamp: 20170128170842Z

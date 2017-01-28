@@ -1,0 +1,15 @@
+# AUTO-GENERATED FILE - DO NOT EDIT!! Use ldapmodify.
+# CRC32 e1d7aede
+dn: dc=my-domain
+dc: my-domain
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+o: myOrganization
+structuralObjectClass: organization
+entryUUID: 008925d9-711e-4f69-a3a5-cb7ef7e8b57d
+creatorsName: uid=root,dc=my-domain,dc=com
+createTimestamp: 20170128170842Z
+entryCSN: 20170128170842.779978Z#000000#000#000000
+modifiersName: uid=root,dc=my-domain,dc=com
+modifyTimestamp: 20170128170842Z

@@ -1,0 +1,14 @@
+# AUTO-GENERATED FILE - DO NOT EDIT!! Use ldapmodify.
+# CRC32 e2a21c07
+dn: ou=groups
+ou: Groups
+objectClass: top
+objectClass: organizationalUnit
+description: Parent object of all UNIX groups
+structuralObjectClass: organizationalUnit
+entryUUID: 7e8ee7ca-540b-4483-87ac-4a1f9768f4e6
+creatorsName: uid=root,dc=my-domain,dc=com
+createTimestamp: 20170128170842Z
+entryCSN: 20170128170842.782067Z#000000#000#000000
+modifiersName: uid=root,dc=my-domain,dc=com
+modifyTimestamp: 20170128170842Z

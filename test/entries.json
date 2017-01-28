@@ -1,0 +1,157 @@
+{
+    "entries": [
+        {
+            "attributes": {
+                "dc": "my-domain",
+                "o": [
+                    "myOrganization"
+                ],
+                "objectClass": [
+                    "top",
+                    "dcObject",
+                    "organization"
+                ]
+            },
+            "dn": "dc=my-domain,dc=com",
+            "raw": {
+                "dc": [
+                    "my-domain"
+                ],
+                "o": [
+                    "myOrganization"
+                ],
+                "objectClass": [
+                    "top",
+                    "dcObject",
+                    "organization"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "description": [
+                    "Parent object of all UNIX groups"
+                ],
+                "objectClass": [
+                    "top",
+                    "organizationalUnit"
+                ],
+                "ou": [
+                    "Groups"
+                ]
+            },
+            "dn": "ou=groups,dc=my-domain,dc=com",
+            "raw": {
+                "description": [
+                    "Parent object of all UNIX groups"
+                ],
+                "objectClass": [
+                    "top",
+                    "organizationalUnit"
+                ],
+                "ou": [
+                    "Groups"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "description": [
+                    "Parent object of all UNIX accounts"
+                ],
+                "objectClass": [
+                    "top",
+                    "organizationalUnit"
+                ],
+                "ou": [
+                    "People"
+                ]
+            },
+            "dn": "ou=people,dc=my-domain,dc=com",
+            "raw": {
+                "description": [
+                    "Parent object of all UNIX accounts"
+                ],
+                "objectClass": [
+                    "top",
+                    "organizationalUnit"
+                ],
+                "ou": [
+                    "People"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "description": [
+                    "Bind user"
+                ],
+                "objectClass": [
+                    "top",
+                    "simpleSecurityObject",
+                    "account"
+                ],
+                "uid": [
+                    "bind"
+                ],
+                "userPassword": [
+                    "{SSHA}j/puIhSt3CcMq7snCpN5SktaQxLeSJLD"
+                ]
+            },
+            "dn": "uid=bind,dc=my-domain,dc=com",
+            "raw": {
+                "description": [
+                    "Bind user"
+                ],
+                "objectClass": [
+                    "top",
+                    "simpleSecurityObject",
+                    "account"
+                ],
+                "uid": [
+                    "bind"
+                ],
+                "userPassword": [
+                    "{SSHA}j/puIhSt3CcMq7snCpN5SktaQxLeSJLD"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "description": [
+                    "Root user"
+                ],
+                "objectClass": [
+                    "top",
+                    "simpleSecurityObject",
+                    "account"
+                ],
+                "uid": [
+                    "bind",
+                    "root"
+                ],
+                "userPassword": [
+                    "{SSHA}F595ZKdb85FaBgH9D3zcs3RNws0GvzdB"
+                ]
+            },
+            "dn": "uid=root,dc=my-domain,dc=com",
+            "raw": {
+                "description": [
+                    "Root user"
+                ],
+                "objectClass": [
+                    "top",
+                    "simpleSecurityObject",
+                    "account"
+                ],
+                "uid": [
+                    "bind",
+                    "root"
+                ],
+                "userPassword": [
+                    "{SSHA}F595ZKdb85FaBgH9D3zcs3RNws0GvzdB"
+                ]
+            }
+        }
+    ]
+}
