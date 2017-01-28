@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app
+from flask import Blueprint
 from flask_login import LoginManager
 from flask_ldap3_login import LDAP3LoginManager
 
@@ -19,3 +19,7 @@ def init_app(app):
     @login_manager.user_loader
     def load_user(id):
         return models.User.from_ldap(dn=id)
+
+    # Set up sanity checks.
+    from . import sanity
+    getattr(app, 'sanity_check_modules', []).append(sanity)

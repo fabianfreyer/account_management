@@ -19,6 +19,10 @@ def create_app(profile="default"):
     except:
         pass
 
+    # Set up sanity checks.
+    from . import sanity
+    app.sanity_check_modules = [sanity]
+
     from app.user import user_blueprint, init_app as init_user
     app.register_blueprint(user_blueprint)
     init_user(app)
@@ -27,11 +31,23 @@ def create_app(profile="default"):
     app.register_blueprint(oauth2_blueprint)
     init_oauth2(app)
 
+
     return app
 
 def check_sanity(fix=True):
+    # Global sanity checks
     from . import sanity
-    for i in dir(sanity):
-        item = getattr(sanity,i)
-        if callable(item) and i.startswith('check'):
-            item(fix)
+
+    sanity_check_modules = getattr(current_app,
+            'sanity_check_modules',
+            [sanity])
+    if sanity not in sanity_check_modules:
+        sanity_check_modules.append(sanity)
+
+    for mod in sanity_check_modules:
+        current_app.logger.info(
+                "Running sanity checks for {mod}".format(mod=mod))
+        for i in dir(mod):
+            item = getattr(mod,i)
+            if callable(item) and i.startswith('check'):
+                item(fix)

@@ -9,4 +9,9 @@ def init_app(app):
     oauth = OAuth2Provider(app)
     oauth.init_app(app)
     app.oauth2_provider = oauth
+
+    # Set up sanity checks.
+    from . import sanity
+    getattr(app, 'sanity_check_modules', []).append(sanity)
+
     return app
