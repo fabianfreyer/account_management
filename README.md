@@ -1,5 +1,7 @@
 # ZaPF OAuth Provider
 
+[![Code Climate](https://codeclimate.com/github/ZaPF/account_management/badges/gpa.svg)](https://codeclimate.com/github/ZaPF/account_management) [![Issue Count](https://codeclimate.com/github/ZaPF/account_management/badges/issue_count.svg)](https://codeclimate.com/github/ZaPF/account_management)
+
 ## Commands
 
 Apart from the usual `manage.py runserver` and `manage.py shell`, the following
