@@ -53,12 +53,21 @@ class User(UserMixin, LDAPOrm):
         from ldap3.utils.hashed import hashed
         self._password = hashed(current_app.config['PASSWORD_HASHING_FUNC'], value)
 
+    @property
+    def groups(self):
+        return [
+                Group.from_dn(membership['dn'])
+                for membership in current_app.ldap3_login_manager.get_user_groups(
+                    self.dn,
+                    _connection = current_app.ldap3_login_manager.connection
+                    )
+                ]
+
     def _orm_mapping_load(self, entry):
         # FIXME: It would be nice if the ORM could somehow automagically
         # build up this mapping.
         self.dn = entry.entry_dn
         (self.username,) = getattr(entry, current_app.config['LDAP_USER_LOGIN_ATTR'])[0],
-        current_app.logger.debug(self.username)
         self.firstName = entry.givenName.value
         self.surname = entry.sn.value
         self._full_name = entry.cn.value
@@ -87,3 +96,65 @@ class User(UserMixin, LDAPOrm):
                 firstName = self.firstName,
                 surname = self.surname
                 )
+
+class Group(LDAPOrm):
+    # This doesn't really work either, so we have to overload _basedn
+    # basedn_config_var = 'LDAP_OAUTH2_GROUP_DN'
+    @classmethod
+    def _basedn(cls):
+        return current_app.ldap3_login_manager.full_group_search_dn
+
+    objectClasses = ['groupOfNames']
+    # FIXME: 'cn' should really be current_app.config['LDAP_GROUP_LOGIN_ATTR']
+    # here. Unfortunately, current_app doesn't really work here, so the ORM
+    # has to be adapted to deal with this.
+    keyMapping = ('cn', 'group_name')
+
+    def __init__(self, name = None, description=None, members=None):
+        self._group_name = name
+        self.description = description
+        self._members = members
+
+    @property
+    def group_name(self):
+        # Read-only.
+        return self._group_name
+
+    @property
+    def members(self):
+        return [User.from_dn(dn) for dn in self._members]
+
+    @members.setter
+    def members(self, users):
+        self._members = [user.dn for user in users]
+
+    def join(self, user):
+        """
+        Add a user to the group.
+        """
+        self._members.append(user.dn)
+
+    def leave(self, user):
+        """
+        Remove a user from the group.
+        """
+        self._members = [ dn for dn in self._members if dn != user.dn ]
+
+    def _orm_mapping_load(self, entry):
+        # FIXME: It would be nice if the ORM could somehow automagically
+        # build up this mapping.
+        self.dn = entry.entry_dn
+        self._group_name = entry.cn.value
+        self.description = entry.description.value
+        self._members = entry.member.values
+
+    def _orm_mapping_save(self, entry):
+        # FIXME: It would be nice if the ORM could somehow automagically
+        # build up this mapping.
+        if self._members:
+            entry.member = self._members
+        if self.description:
+            entry.description = self._group_name
+
+    def __repr__(self):
+        return '<Group {name}>'.format(name=self.group_name)

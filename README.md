@@ -24,6 +24,12 @@ commands are supported:
 * `manage.py passwd uid` - change a password for the user
 * `manage.py sanity` - runs sanity checks, like checking that the base DN's for
   different things exist, and creates them if necessary
+* `manage.py groups`  - lists groups
+* `manage.py members group_name` - list members in a group
+* `manage.py newgroup group_name` - create a group
+* `manage.py delgroup group_name` - delete a group
+* `manage.py join username group_name` - add a user to a group
+* `manage.py remove username group_name` - remove a user from a group
 
 ## OpenLDAP notes
 

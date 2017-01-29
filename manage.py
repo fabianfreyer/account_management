@@ -45,6 +45,92 @@ def create_user(uid, givenName, sn, mail=None, password=None):
     from app.user.models import User
     return User.create(uid, givenName, sn, password or _getpass(), mail)
 
+@manager.command
+def groups():
+    """
+    List groups
+    """
+    from app.user.models import Group
+    groups = Group.query()
+    for group in groups:
+        print('{0.group_name}: {0.description}'.format(group))
+
+@manager.command
+def members(group_id):
+    from app.user.models import Group
+    group = Group.get(group_id)
+    for member in group.members:
+        print('{0.username}: {0.full_name}'.format(member))
+
+@manager.command
+def join(username, group_name):
+    """
+    Add a user to a group
+    """
+    from app.user.models import User, Group
+    from ldap3.core.exceptions import LDAPAttributeOrValueExistsResult
+    try:
+        group = Group.get(group_name)
+        if not group:
+            raise AttributeError("group does not exist")
+        group.join(User.get(username))
+        group.save()
+    except LDAPAttributeOrValueExistsResult:
+        print("User already in group")
+    except AttributeError:
+        print("User or Group does not exist")
+
+@manager.command
+def remove(username, group_name):
+    """
+    Remove a user from a group
+    """
+    from app.user.models import User, Group
+    group = Group.get(group_name)
+    if not group:
+        raise AttributeError("group does not exist")
+    group.leave(User.get(username))
+    group.save()
+
+@manager.command
+def delgroup(group_name):
+    """
+    Delete a group
+    """
+    from app.user.models import Group
+    Group.get(group_name).delete()
+
+@manager.command
+def newgroup(group_name):
+    """
+    Create a group
+    """
+    from app.user.models import User, Group
+    g = Group(name = group_name)
+    g.description = input('Enter a description of the group '
+                          '(or leave blank for none): ') or None
+    print('Enter a list of initial user names to be added to the group, one on '
+          'each line, ending with an empty line: ')
+    users = []
+    while True:
+        username = input('> ')
+        if not username:
+            break
+
+        user = User.get(username)
+        if not user:
+            print('Could not find user: {}'.format(username))
+            continue
+
+        if user in users:
+            print('Heard you the first time.')
+            continue
+
+        users.append(user)
+
+    g.members = users
+    g.save()
+
 if __name__ == "__main__":
     if app.config['MOCKSERVER'] == True:
         from unittest import mock

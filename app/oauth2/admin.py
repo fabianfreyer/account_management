@@ -9,6 +9,7 @@ from wtforms import StringField, TextField, SubmitField, FieldList
 from wtforms.validators import DataRequired
 
 from .models import Client
+from app.user import groups_required
 from . import oauth2_blueprint
 
 class AddClientForm(FlaskForm):
@@ -34,17 +35,17 @@ class AddClientForm(FlaskForm):
         while temp:
             field.append_entry(temp.pop())
 
-# FIXME: This should be only accessible by admins.
-@login_required
 @oauth2_blueprint.route('/admin/oauth2/client')
+@login_required
+@groups_required('admin')
 def clients():
     clients = Client.query()
     return render_template('/admin/oauth2/clients.html', clients=clients)
 
 
-# FIXME: This should be only accessible by admins.
-@login_required
 @oauth2_blueprint.route('/admin/oauth2/client/<string:client_id>/delete')
+@login_required
+@groups_required('admin')
 def delete_client(client_id):
     client = Client.get(client_id)
     flash('Deleted client: {uuid}({name})'.format(
@@ -53,9 +54,9 @@ def delete_client(client_id):
     client.delete()
     return redirect(url_for('oauth2.clients'))
 
-# FIXME: This should be only accessible by admins.
-@login_required
 @oauth2_blueprint.route('/admin/oauth2/client/<string:client_id>', methods=['GET', 'POST'])
+@login_required
+@groups_required('admin')
 def edit_client(client_id):
     client = Client.get(client_id)
 
@@ -84,8 +85,9 @@ def edit_client(client_id):
 
     return render_template('/admin/oauth2/new.html', form=form)
 
-@login_required
 @oauth2_blueprint.route('/admin/oauth2/client/new', methods=['GET', 'POST'])
+@login_required
+@groups_required('admin')
 def add_client():
     form = AddClientForm()
     if form.validate_on_submit() and form.submit.data:

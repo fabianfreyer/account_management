@@ -49,6 +49,25 @@ class LDAPOrm(object):
         return r
 
     @classmethod
+    def from_dn(cls, dn):
+        from ldap3 import Reader
+        from ldap3.core.exceptions import LDAPNoSuchObjectResult
+        conn = current_app.ldap3_login_manager.connection
+
+        r = Reader(conn,
+                cls._objectdef(),
+                cls._basedn())
+        try:
+            entry = r.search_object(dn)
+        except LDAPNoSuchObjectResult:
+            raise LookupError("No such object: {qry}".format(qry = qry))
+            return None
+
+        item = cls()
+        item._orm_mapping_load(entry)
+        return item
+
+    @classmethod
     def query(cls, qry=None):
         r = cls._get_read_cursor(qry)
         def populate_from(entry):

@@ -14,6 +14,8 @@ class Config:
     LDAP_BIND_USER_PASSWORD = 'bind123'
     LDAP_USER_RDN_ATTR = 'uid'
     LDAP_USER_LOGIN_ATTR = 'uid'
+    LDAP_GROUP_OBJECT_FILTER = '(objectClass=groupOfNames)'
+    LDAP_GROUP_MEMBERS_ATTR = 'member'
     LDAP_READONLY = False
 
     RECAPTCHA_DATA_ATTRS = {'theme': 'dark'}
