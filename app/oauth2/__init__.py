@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_oauthlib.provider import OAuth2Provider
 
-oauth2_blueprint = Blueprint('oauth2', __name__,)
+oauth2_blueprint = Blueprint('oauth2', __name__, template_folder = 'templates/')
 
 from . import views
 

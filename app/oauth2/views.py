@@ -1,3 +1,3 @@
 from .models import Client, Grant, Token
-from . import oauth2_blueprint
+from . import oauth2_blueprint, admin
 

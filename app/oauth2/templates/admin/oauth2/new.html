@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block title %}Add OAuth2 Client{% endblock %}
+
+{% block content %}
+  <form method="POST">
+    {{ render_field(form.name) }}
+    {{ render_field(form.description) }}
+    {{ render_field(form.submit) }}
+    {{ form.hidden_tag() }}
+  </form>
+{% endblock %}

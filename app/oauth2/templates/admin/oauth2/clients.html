@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}OAuth2 Client applications{% endblock %}
+
+{% block content %}
+
+<a href="{{url_for('oauth2.add_client')}}">Add Client</a>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Client ID</th>
+    <th>Client Secret</th>
+    <th>Description</th>
+    <th>Actions</th>
+  </tr>
+{% for client in clients %}
+  <tr>
+    <td>{{client.name}}</td>
+    <td>{{client.client_id}}</td>
+    <td>{{client.client_secret}}</td>
+    <td>{{client.description}}</td>
+    <td>
+      <a href="{{url_for('oauth2.delete_client', client_id=client.client_id)}}">Delete</a>
+    </td>
+  </tr>
+{% endfor %}
+</table>
+
+{% endblock %}
