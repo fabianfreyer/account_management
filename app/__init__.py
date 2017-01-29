@@ -9,6 +9,8 @@ def create_app(profile="default"):
 
     app.config.from_object(config[profile])
     config[profile].init_app(app)
+    app.config.from_envvar('AUTH_SETTINGS', silent=True)
+
     app.logger.setLevel(logging.DEBUG)
 
     try:

@@ -2,6 +2,14 @@
 
 [![Code Climate](https://codeclimate.com/github/ZaPF/account_management/badges/gpa.svg)](https://codeclimate.com/github/ZaPF/account_management) [![Issue Count](https://codeclimate.com/github/ZaPF/account_management/badges/issue_count.svg)](https://codeclimate.com/github/ZaPF/account_management)
 
+## Deployment
+
+### Environment Variables
+
+Variable        | Description
+----------------|----------------------------------------------------
+`AUTH_SETTINGS` | A path to a config file that overrides the defaults
+
 ## Commands
 
 Apart from the usual `manage.py runserver` and `manage.py shell`, the following
