@@ -5,7 +5,7 @@ import logging
 from . import models
 
 def create_app(profile="default"):
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder='templates/')
 
     app.config.from_object(config[profile])
     config[profile].init_app(app)
@@ -22,6 +22,9 @@ def create_app(profile="default"):
     # Set up sanity checks.
     from . import sanity
     app.sanity_check_modules = [sanity]
+
+    from flask_bootstrap import Bootstrap
+    Bootstrap(app)
 
     from app.user import user_blueprint, init_app as init_user
     app.register_blueprint(user_blueprint)
