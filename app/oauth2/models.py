@@ -1,4 +1,6 @@
 from app.orm import LDAPOrm
+from app.user.models import User
+from flask_login import AnonymousUserMixin
 
 class Grant(object):
     user_id =  None
@@ -8,12 +10,19 @@ class Grant(object):
     expires = None
     _scopes = []
 
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
     def delete(self):
         return self
 
     @property
+    def user(self):
+        return User.get(self.user_id) or AnonymousUserMixin()
+
+    @property
     def scopes(self):
-        return _scopes
+        return self._scopes
 
 class Token(object):
     client_id = None
@@ -26,6 +35,9 @@ class Token(object):
 
     def delete(self):
         return self
+
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
 
     @property
     def scopes(self):

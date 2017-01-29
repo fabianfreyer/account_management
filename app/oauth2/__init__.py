@@ -4,6 +4,7 @@ from flask_cache import Cache
 from werkzeug.contrib.cache import SimpleCache
 from .models import Client, Grant, Token
 from flask_login import current_user
+from datetime import datetime, timedelta
 
 oauth2_blueprint = Blueprint('oauth2', __name__, template_folder = 'templates/')
 oauth = OAuth2Provider()
@@ -26,7 +27,6 @@ def init_app(app):
 @oauth.clientgetter
 def load_client(client_id):
     return Client.get(client_id)
-from datetime import datetime, timedelta
 
 @oauth.grantgetter
 def load_grant(client_id, code):
@@ -73,7 +73,7 @@ def save_token(token, request, *args, **kwargs):
         _scopes=token['scope'],
         expires=expires,
         client_id=request.client.client_id,
-        user_id=request.user.id,
+        user_id=request.user.get_id(),
     )
     cache.set('token/access/{tok}'.format(tok = token['access_token']), tok)
     cache.set('token/refresh/{tok}'.format(tok = token['refresh_token']), tok)
