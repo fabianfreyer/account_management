@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block title %}register{% endblock %}
+{% block content %}
+  <form method="POST">
+    {{ render_field(form.username) }}
+    {{ render_field(form.givenName) }}
+    {{ render_field(form.surname) }}
+    {{ render_field(form.password) }}
+    {{ render_field(form.confirm) }}
+    {{ form.recaptcha }}
+    {{ render_field(form.submit) }}
+    {{ form.hidden_tag() }}
+  </form>
+{% endblock %}

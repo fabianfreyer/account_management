@@ -16,6 +16,7 @@ class Config:
     LDAP_USER_LOGIN_ATTR = 'uid'
     LDAP_READONLY = False
 
+    RECAPTCHA_DATA_ATTRS = {'theme': 'dark'}
     import ldap3
     PASSWORD_HASHING_FUNC = ldap3.HASHED_SALTED_SHA384
 
@@ -26,6 +27,9 @@ class Config:
 class DevelopmentConfig(Config):
     SECRET_KEY = 'secrets'
     DEBUG=True
+    RECAPTCHA_PUBLIC_KEY="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+    RECAPTCHA_PRIVATE_KEY="6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
+    RECAPTCHA_USE_SSL=False
     #MOCKSERVER = True
 
 class ProductionConfig(Config):
@@ -38,6 +42,9 @@ class TestingConfig(Config):
     FLASK_COVERAGE = 1
     SECRET_KEY = 'secrets'
     WTF_CSRF_ENABLED = False
+    RECAPTCHA_PUBLIC_KEY="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+    RECAPTCHA_PRIVATE_KEY="6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
+    RECAPTCHA_USE_SSL=False
 
 
 config = {

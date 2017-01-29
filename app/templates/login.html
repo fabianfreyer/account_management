@@ -15,6 +15,7 @@
       {{ wtf.form_errors(form, hiddens="only") }}
       {{ form.username(class='form-control', placeholder='Username')|safe }}
       {{ form.password(class='form-control', placeholder='Password')|safe }}
+      <p>Don't have an account? <a href="{{url_for('user.signup')}}">Sign up!</a></p>
       <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
       {{ form.hidden_tag() }}
     </form>
