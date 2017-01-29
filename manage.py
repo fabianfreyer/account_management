@@ -13,25 +13,27 @@ def sanity():
     """
     check_sanity()
 
+def _getpass():
+    """
+    Simple getpass wrapper that asks for a password twice.
+    """
+    from getpass import getpass
+    password = getpass('New password: ')
+    if (getpass('Repeat password: ') != password):
+        raise Exception("Paswords were not equal")
+
 @manager.command
 def passwd(username, password=None):
     """
     Change a user's password
     """
     from app.user.models import User
-    from getpass import getpass
-
     try:
         user = User.from_ldap(username)
     except LookupError:
         app.logger.fatal("User does not exist: %d", dn)
     else:
-        if password is None:
-            password = getpass('New password: ')
-            if (getpass('Repeat password: ') != password):
-                raise Exception("Paswords were not equal")
-
-        user.change_password(password)
+        user.change_password(password or _getpass())
         return user
 
 @manager.command
@@ -40,14 +42,7 @@ def create_user(uid, givenName, sn, password=None):
     Create a user
     """
     from app.user.models import User
-    from getpass import getpass
-
-    if password is None:
-        password = getpass('New password: ')
-        if (getpass('Repeat password: ') != password):
-            raise Exception("Paswords were not equal")
-
-    return User.create(uid, givenName, sn, password)
+    return User.create(uid, givenName, sn, password or _getpass())
 
 if __name__ == "__main__":
     if app.config['MOCKSERVER'] == True:
