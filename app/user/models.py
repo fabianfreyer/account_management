@@ -16,21 +16,22 @@ class User(UserMixin, LDAPOrm):
     # has to be adapted to deal with this.
     keyMapping = ('uid', 'username')
 
-    def __init__(self, username=None, dn=None, firstName=None, surname=None):
+    def __init__(self, username=None, dn=None, firstName=None, surname=None, mail=None):
         self.dn = dn
         self.username = username
         self.firstName = firstName
         self.surname = surname
         self._full_name = None
         self._password = None
+        self.mail = mail
 
     # FIXME: This could be simplified to just create a User object, populate it,
     @staticmethod
-    def create(username, givenName, surname, password):
+    def create(username, givenName, surname, password, mail = None):
         """
         Create a user and save it.
         """
-        user = User(username = username, firstName = givenName, surname = surname)
+        user = User(username = username, firstName = givenName, surname = surname, mail = mail)
         user.password = password
         user.save()
         return user
@@ -61,6 +62,7 @@ class User(UserMixin, LDAPOrm):
         self.firstName = entry.givenName.value
         self.surname = entry.sn.value
         self._full_name = entry.cn.value
+        self.mail = entry.mail.value
 
     def _orm_mapping_save(self, entry):
         # FIXME: It would be nice if the ORM could somehow automagically
@@ -70,6 +72,8 @@ class User(UserMixin, LDAPOrm):
         entry.givenName = self.firstName
         if self.password:
             entry.userPassword = self._password
+        if self.mail:
+            entry.mail = self.mail
 
     def __repr__(self):
         return "<User: {full_name}>".format(full_name = self.full_name)

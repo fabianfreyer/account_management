@@ -49,6 +49,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .form-signup input#givenName,
 .form-signup input#surname,
+.form-signup input#mail,
 .form-signup input#password {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;

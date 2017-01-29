@@ -17,6 +17,7 @@
         {{ form.givenName(class='form-control', placeholder='Given name')|safe }}
         {{ form.surname(class='form-control', placeholder='Surname')|safe }}
       </div>
+      {{ form.mail(class='form-control', placeholder='Email')|safe }}
       {{ form.password(class='form-control', placeholder='Password')|safe }}
       {{ form.confirm(class='form-control', placeholder='Repeat Password')|safe }}
       {{ wtf.form_errors(form) }}

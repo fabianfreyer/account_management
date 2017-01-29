@@ -5,7 +5,8 @@ from .models import User
 from flask_login import login_user, current_user, login_required, logout_user
 from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, TextField, SubmitField, PasswordField
-from wtforms.validators import DataRequired, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
+from wtforms.fields.html5 import EmailField
 
 from . import user_blueprint
 
@@ -13,6 +14,9 @@ class SignUpForm(FlaskForm):
     username = StringField('user', validators=[DataRequired('Please enter a username')])
     givenName = StringField('givenName', validators=[DataRequired('Please enter your given name')])
     surname = StringField('surname', validators=[DataRequired('Please enter your surname')])
+    mail = EmailField('email', validators=[
+            DataRequired('Please enter your E-Mail address'),
+            Email('Please enter a valid E-Mail address')])
     password = PasswordField('password', validators=[
             DataRequired('Please enter a password'),
             EqualTo('confirm', 'Passwords must match')])
@@ -62,7 +66,8 @@ def signup():
             username = form.username.data,
             password = form.password.data,
             givenName = form.givenName.data,
-            surname = form.surname.data
+            surname = form.surname.data,
+            mail = form.mail.data,
             )
         current_app.logger.info("creating user: {}".format(user))
         flash("Your user account has been created.")

@@ -38,12 +38,12 @@ def passwd(username, password=None):
         return user
 
 @manager.command
-def create_user(uid, givenName, sn, password=None):
+def create_user(uid, givenName, sn, mail=None, password=None):
     """
     Create a user
     """
     from app.user.models import User
-    return User.create(uid, givenName, sn, password or _getpass())
+    return User.create(uid, givenName, sn, password or _getpass(), mail)
 
 if __name__ == "__main__":
     if app.config['MOCKSERVER'] == True:
