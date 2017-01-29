@@ -1,3 +1,5 @@
+from app.orm import LDAPOrm
+
 class Grant(object):
     user_id =  None
     client_id =  None
@@ -29,29 +31,69 @@ class Token(object):
     def scopes(self):
         return _scopes
 
-class Client(object):
+
+class Client(LDAPOrm):
+    basedn_config_var = 'LDAP_OAUTH2_CLIENT_DN'
+    objectClasses = ['oauthClientMetadata']
+    keyMapping = ('oauthClientID', 'client_id')
+
     # human readable name, not required
     name = None
-
-    # human readable description, not required
     description = None
-
     client_id = None
-    client_secret = None
-
-    # public or confidential
-    is_confidential = False
-
+    _client_secret = None
+    is_confidential = True
     _redirect_uris = []
     _default_scopes = []
 
+    def __init__(self, client_id=None):
+        import uuid
+        self.client_id = client_id or str(uuid.uuid4())
+
+    def __repr__(self):
+        return '<OAuth2Client: {}>'.format(
+                self.name or self.client_id)
+
     @staticmethod
-    def from_id(clientid):
-        from flask import current_app
-        from ldap3 import ObjectDef, Reader
-        conn = current_app.ldap3_login_manager.connection
-        obj = ObjectDef(['oauthClientMetadata'], conn)
-        r = Reader
+    def create(name = None, redirect_uris=[], default_scopes=[], description=None):
+        client = Client()
+        client.name = name
+        client.description = description
+        client._redirect_uris = redirect_uris
+        client._default_scopes = default_scopes
+        client.save()
+        return client
+
+    @property
+    def client_secret(self):
+        import uuid
+        # Generate a UUID if it isn't set yet.
+        if not self._client_secret:
+            self._client_secret = str(uuid.uuid4())
+        return self._client_secret
+
+    def _orm_mapping_load(self, entry):
+        # FIXME: It would be nice if the ORM could somehow automagically
+        # build up this mapping.
+        self.client_id = entry.oauthClientID[0]
+        self._client_secret = entry.oauthClientSecret[0]
+        self.description = entry.description[0]
+        self._redirect_uris = entry.oauthRedirectURI
+        self._default_scopes = entry.oauthScopeValue
+        self.name = entry.oauthClientName
+
+    def _orm_mapping_save(self, entry):
+        # FIXME: It would be nice if the ORM could somehow automagically
+        # build up this mapping.
+        entry.oauthClientSecret = self.client_secret
+        if self.name:
+            entry.oauthClientName = self.name
+        if self.description:
+            entry.description = self.description
+        for uri in self._redirect_uris:
+            entry.oauthRedirectURI += uri
+        for scope in self._default_scopes:
+            entry.oauthScopeValue += scope
 
     @property
     def client_type(self):
@@ -74,4 +116,3 @@ class Client(object):
         if self._default_scopes:
             return self._default_scopes
         return []
-

@@ -29,11 +29,12 @@ def passwd(username, password=None):
     """
     from app.user.models import User
     try:
-        user = User.from_ldap(username)
+        user = User.get(username)
     except LookupError:
         app.logger.fatal("User does not exist: %d", dn)
     else:
-        user.change_password(password or _getpass())
+        user.password = password or _getpass()
+        user.save()
         return user
 
 @manager.command

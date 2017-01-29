@@ -13,12 +13,12 @@ def init_app(app):
 
     @ldap_manager.save_user
     def save_user(dn, username, data, memberships):
-        user = models.User.from_ldap(dn=dn)
+        user = models.User.get(username)
         return user
 
     @login_manager.user_loader
     def load_user(id):
-        return models.User.from_ldap(dn=id)
+        return models.User.get(id)
 
     # Set up sanity checks.
     from . import sanity

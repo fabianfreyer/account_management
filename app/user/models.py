@@ -1,147 +1,85 @@
 from flask_login import UserMixin
 from flask import current_app
 
-class User(UserMixin):
-    def __init__(self, dn, username, firstName, surname):
+from app.orm import LDAPOrm
+
+class User(UserMixin, LDAPOrm):
+    # This doesn't really work either, so we have to overload _basedn
+    # basedn_config_var = 'LDAP_OAUTH2_CLIENT_DN'
+    @classmethod
+    def _basedn(cls):
+        return current_app.ldap3_login_manager.full_user_search_dn
+
+    objectClasses = ['inetOrgPerson','simpleSecurityObject']
+    # FIXME: 'uid' should really be current_app.config['LDAP_USER_LOGIN_ATTR']
+    # here. Unfortunately, current_app doesn't really work here, so the ORM
+    # has to be adapted to deal with this.
+    keyMapping = ('uid', 'username')
+
+    def __init__(self, username=None, dn=None, firstName=None, surname=None):
         self.dn = dn
         self.username = username
         self.firstName = firstName
         self.surname = surname
+        self._full_name = None
+        self._password = None
 
     # FIXME: This could be simplified to just create a User object, populate it,
     @staticmethod
-    def create(username, givenName, sn, password):
+    def create(username, givenName, surname, password):
         """
         Create a user and save it.
         """
-        from ldap3 import ObjectDef, Reader, Writer
-        from ldap3.core.exceptions import LDAPNoSuchObjectResult
-        from ldap3.utils.hashed import hashed
-
-        conn = current_app.ldap3_login_manager.connection
-        userbase = current_app.ldap3_login_manager.full_user_search_dn
-        dn = '{user_attr}={username},{userbase}'.format(
-                user_attr = current_app.config['LDAP_USER_LOGIN_ATTR'],
-                username = username,
-                userbase = userbase
-            )
-
-        obj_account = ObjectDef(['inetOrgPerson','simpleSecurityObject'], conn)
-
-        r = Reader(conn, obj_account, userbase)
-        try:
-            r.search()
-        except LDAPNoSuchObjectResult:
-            pass
-
-        w = Writer.from_cursor(r)
-        user = w.new(dn)
-        user.sn = sn
-        user.givenName = givenName
-        user.cn = "{givenName} {sn}".format(givenName=givenName, sn=sn)
-        user.userPassword = hashed(current_app.config['PASSWORD_HASHING_FUNC'], password)
-        w.commit()
-        return User(dn, username, givenName, sn)
-
-    @staticmethod
-    def from_ldap(username=None, dn=None):
-        """
-        Load a user from LDAP
-        """
-        user = User(dn, username, None, None)
-        user.load()
+        user = User(username = username, firstName = givenName, surname = surname)
+        user.password = password
+        user.save()
         return user
 
     @property
-    def _read_cursor(self):
+    def password(self):
         """
-        return a read cursor containing just this user.
+        Return if the password has been changed
         """
-        from ldap3 import ObjectDef, Reader
-        from ldap3.core.exceptions import LDAPNoSuchObjectResult
+        if self._password:
+            return True
+        return False
 
-        conn = current_app.ldap3_login_manager.connection
-
-        if self.dn:
-            r = Reader(conn,
-                    ObjectDef(['inetOrgPerson','simpleSecurityObject'], conn),
-                    current_app.ldap3_login_manager.full_user_search_dn,
-                    )
-            try:
-                r.search_object(self.dn)
-            except LDAPNoSuchObjectResult:
-                raise LookupError("User does not exist: {username}".format(username=username))
-                return None
-        elif self.username:
-            query = '{user_attr}: {username}'.format(
-                user_attr = current_app.config['LDAP_USER_LOGIN_ATTR'],
-                username = self.username
-                )
-            r = Reader(conn,
-                    ObjectDef(['inetOrgPerson','simpleSecurityObject'], conn),
-                    current_app.ldap3_login_manager.full_user_search_dn,
-                    query
-                    )
-            try:
-                r.search()
-            except LDAPNoSuchObjectResult:
-                raise LookupError("User does not exist: {username}".format(username=username))
-                return None
-        else:
-            raise AttributeError("At least the username or the dn have to be specified")
-
-
-        return r
-
-    @property
-    def _write_cursor(self):
+    @password.setter
+    def password(self, value):
         """
-        return a write cursor containing just this user.
+        Set the password
         """
-        from ldap3 import Writer
-        w = Writer.from_cursor(self._read_cursor)
-        return w
+        from ldap3.utils.hashed import hashed
+        self._password = hashed(current_app.config['PASSWORD_HASHING_FUNC'], value)
 
-    def load(self):
-        """
-        Load the User from the LDAP
-        """
-        entry = self._read_cursor[0]
+    def _orm_mapping_load(self, entry):
+        # FIXME: It would be nice if the ORM could somehow automagically
+        # build up this mapping.
         self.dn = entry.entry_dn
-        self.username = getattr(entry, current_app.config['LDAP_USER_LOGIN_ATTR']),
-        self.firstName = entry.givenName
-        self.surname = entry.sn
+        (self.username,) = getattr(entry, current_app.config['LDAP_USER_LOGIN_ATTR'])[0],
+        current_app.logger.debug(self.username)
+        self.firstName = entry.givenName.value
+        self.surname = entry.sn.value
+        self._full_name = entry.cn.value
 
-    def save(self):
-        """
-        Save the User to LDAP
-        """
-        writer = self._write_cursor
-        entry = writer[0]
+    def _orm_mapping_save(self, entry):
+        # FIXME: It would be nice if the ORM could somehow automagically
+        # build up this mapping.
         entry.sn = self.surname
         entry.cn = self.full_name
         entry.givenName = self.firstName
-        writer.commit()
-
-    def change_password(self, password):
-        """
-        Change User's password
-        """
-        from ldap3.utils.hashed import hashed
-        writer = self._write_cursor
-        entry = writer[0]
-        entry.userPassword = hashed(current_app.config['PASSWORD_HASHING_FUNC'], password)
-        writer.commit()
+        if self.password:
+            entry.userPassword = self._password
 
     def __repr__(self):
         return "<User: {full_name}>".format(full_name = self.full_name)
 
     def get_id(self):
-        return self.dn
+        return self.username
 
     @property
     def full_name(self):
-        return "{firstName} {surname}".format(
+        return self._full_name or "{firstName} {surname}".format(
                 firstName = self.firstName,
                 surname = self.surname
                 )
