@@ -6,3 +6,4 @@ ipython>=5.1.0
 -e git+https://github.com/cannatag/ldap3.git@0b3dcf4ea37735766ce116030259291ee4b8f548#egg=ldap3-2.2.1.0b3dcf4ea
 flask_oauthlib>=0.9.3
 flask_bootstrap>=3.3.7
+flask-cache>=0.13.1

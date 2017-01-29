@@ -21,6 +21,7 @@
     <td>{{client.client_secret}}</td>
     <td>{{client.description}}</td>
     <td>
+      <a href="{{url_for('oauth2.edit_client', client_id=client.client_id)}}">Edit</a>
       <a href="{{url_for('oauth2.delete_client', client_id=client.client_id)}}">Delete</a>
     </td>
   </tr>

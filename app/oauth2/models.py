@@ -75,12 +75,12 @@ class Client(LDAPOrm):
     def _orm_mapping_load(self, entry):
         # FIXME: It would be nice if the ORM could somehow automagically
         # build up this mapping.
-        self.client_id = entry.oauthClientID[0]
-        self._client_secret = entry.oauthClientSecret[0]
-        self.description = entry.description[0]
-        self._redirect_uris = entry.oauthRedirectURI
-        self._default_scopes = entry.oauthScopeValue
-        self.name = entry.oauthClientName
+        self.client_id = entry.oauthClientID.value
+        self._client_secret = entry.oauthClientSecret.value
+        self.description = entry.description.value
+        self._redirect_uris = entry.oauthRedirectURI.values
+        self._default_scopes = entry.oauthScopeValue.values
+        self.name = entry.oauthClientName.value
 
     def _orm_mapping_save(self, entry):
         # FIXME: It would be nice if the ORM could somehow automagically
@@ -90,10 +90,10 @@ class Client(LDAPOrm):
             entry.oauthClientName = self.name
         if self.description:
             entry.description = self.description
-        for uri in self._redirect_uris:
-            entry.oauthRedirectURI += uri
-        for scope in self._default_scopes:
-            entry.oauthScopeValue += scope
+        if self._redirect_uris:
+            entry.oauthRedirectURI = self._redirect_uris
+        if self._default_scopes:
+            entry.oauthScopeValue = self._default_scopes
 
     @property
     def client_type(self):

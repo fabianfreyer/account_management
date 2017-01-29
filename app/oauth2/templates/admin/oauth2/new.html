@@ -7,6 +7,15 @@
   <form method="POST">
     {{ render_field(form.name) }}
     {{ render_field(form.description) }}
+
+    {{ render_field(form.scopes) }}
+    {{ render_field(form.scope) }}
+    {{ render_field(form.addScope) }}
+
+    {{ render_field(form.uris) }}
+    {{ render_field(form.uri) }}
+    {{ render_field(form.addURI) }}
+
     {{ render_field(form.submit) }}
     {{ form.hidden_tag() }}
   </form>
