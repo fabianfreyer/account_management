@@ -63,6 +63,10 @@ class User(UserMixin, LDAPOrm):
                     )
                 ]
 
+    @property
+    def is_admin(self):
+        return 'admin' in [group.group_name for group in self.groups]
+
     def _orm_mapping_load(self, entry):
         # FIXME: It would be nice if the ORM could somehow automagically
         # build up this mapping.
