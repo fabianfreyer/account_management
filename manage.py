@@ -21,6 +21,7 @@ def _getpass():
     password = getpass('New password: ')
     if (getpass('Repeat password: ') != password):
         raise Exception("Paswords were not equal")
+    return password
 
 @manager.command
 def passwd(username, password=None):
