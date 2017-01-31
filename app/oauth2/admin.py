@@ -79,9 +79,11 @@ def edit_client(client_id):
     elif form.addScope.data:
         form.remove_empty(form.scopes)
         form.scopes.append_entry(form.scope.data)
+        form.scope.data = ""
     elif form.addURI.data:
         form.remove_empty(form.uris)
         form.uris.append_entry(form.uri.data)
+        form.uri.data = ""
 
     return render_template('/admin/oauth2/new.html', form=form)
 
