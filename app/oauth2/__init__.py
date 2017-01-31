@@ -44,13 +44,14 @@ def save_grant(client_id, code, request, *args, **kwargs):
         code=code['code'],
         redirect_uri=request.redirect_uri,
         _scopes=request.scopes,
-        user=current_user,
+        user_id=current_user.get_id(),
         expires=expires
     )
     cache.set('grant/{client_id}/{code}'.format(
         client_id = client_id,
         code = code['code']
-        ))
+        ),
+        grant)
 
     return grant
 
