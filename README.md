@@ -31,6 +31,7 @@ commands are supported:
 * `manage.py delgroup group_name` - delete a group
 * `manage.py join username group_name` - add a user to a group
 * `manage.py remove username group_name` - remove a user from a group
+* `manage.py profile [length] [profile_dir]` - run the app under a profiler
 
 ## OpenLDAP notes
 
