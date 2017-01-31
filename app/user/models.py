@@ -10,7 +10,7 @@ class User(UserMixin, LDAPOrm):
     def _basedn(cls):
         return current_app.ldap3_login_manager.full_user_search_dn
 
-    objectClasses = ['inetOrgPerson','simpleSecurityObject','account']
+    objectClasses = ['inetOrgPerson','simpleSecurityObject']
     # FIXME: 'uid' should really be current_app.config['LDAP_USER_LOGIN_ATTR']
     # here. Unfortunately, current_app doesn't really work here, so the ORM
     # has to be adapted to deal with this.
