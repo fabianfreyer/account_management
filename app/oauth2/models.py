@@ -40,6 +40,10 @@ class Token(object):
         self.__dict__.update(kwargs)
 
     @property
+    def user(self):
+        return User.get(self.user_id) or AnonymousUserMixin()
+
+    @property
     def scopes(self):
         return self._scopes
 

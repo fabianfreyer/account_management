@@ -71,7 +71,7 @@ def save_token(token, request, *args, **kwargs):
         access_token=token['access_token'],
         refresh_token=token['refresh_token'],
         token_type=token['token_type'],
-        _scopes=token['scope'],
+        _scopes=token['scope'].split(' '),
         expires=expires,
         client_id=request.client.client_id,
         user_id=request.user.get_id(),
