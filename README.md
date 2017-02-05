@@ -45,6 +45,7 @@ Scope Name    | Description
 --------------|------------------------------------------
 `uni_list`    | List all of the universities
 `ownUserData` | Get user data of currently logged in user
+`registration`| Allow a user to create a registration
 
 ## OpenLDAP notes
 
