@@ -10,6 +10,7 @@ from . import models, views
 def init_app(app):
 
     login_manager = LoginManager(app)
+    login_manager.anonymous_user = models.AnonymousUser
     ldap_manager = LDAP3LoginManager(app)
 
     @ldap_manager.save_user
