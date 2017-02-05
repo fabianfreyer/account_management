@@ -37,6 +37,14 @@ commands are supported:
 * `manage.py set_token name token` - set the token for a uni
 * `manage.py profile [length] [profile_dir]` - run the app under a profiler
 
+## Permissions
+
+Permissions are managed via groups. The members of the following groups have
+special permissions:
+
+* members of `admin` are superusers, and can administrate oauth2 applications
+* members of `orga` can see and edit uni registration data
+
 ## OAuth
 
 ### Scopes
