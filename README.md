@@ -47,6 +47,14 @@ Scope Name    | Description
 `ownUserData` | Get user data of currently logged in user
 `registration`| Allow a user to create a registration
 
+### Endpoints
+
+URL                 | Scopes required | Description
+--------------------|-----------------|----------------------------------------------------------------------------
+`/api/me`           | `ownUserData`   | Get user data of currently logged in user
+`/api/unis`         | `uni_list`      | Get a list of universities
+`/api/registration` | `registration`  | GET the registration of currently logged in user or POST a new registration
+
 ## OpenLDAP notes
 
 ### Schema
