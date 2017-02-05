@@ -18,6 +18,9 @@
       <td>{{ uni.token | safe }}</td>
       <td>
         <div class="btn-group" role="group">
+          <a class="btn-default btn" href="{{url_for('registration.registrations_by_uni', uni_id=uni.id)}}">
+            <span class="glyphicon glyphicon-registration-mark" aria-hidden="true"></span> Registrations
+          </a>
           <a class="btn-default btn" href="{{url_for('registration.edit_uni', uni_id=uni.id)}}">
             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
           </a>

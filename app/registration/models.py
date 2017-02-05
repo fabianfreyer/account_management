@@ -1,4 +1,5 @@
 from app.db import db
+from app.user.models import User
 from flask import Blueprint, abort
 
 class Registration(db.Model):
@@ -8,7 +9,11 @@ class Registration(db.Model):
     priority = db.Column(db.Integer(), unique = True)
     confirmed = db.Column(db.Boolean())
     uni_id = db.Column(db.Integer(), db.ForeignKey('uni.id'))
-    uni = db.relationship('Uni', backref=db.backref('Registrations', lazy='dynamic'))
+    uni = db.relationship('Uni', backref=db.backref('Registrations', lazy='dynamic', cascade="all, delete-orphan"))
+
+    @property
+    def user(self):
+        return User.get(self.username)
 
 class Uni(db.Model):
     id = db.Column(db.Integer(), primary_key = True)

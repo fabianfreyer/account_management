@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, flash
 from . import registration_blueprint
 from app.db import db
-from .models import Uni
+from .models import Uni, Registration
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from app.user import groups_required
@@ -69,3 +69,30 @@ def edit_uni(uni_id):
             return render_template('admin/uniform.html', form = form)
         return redirect(url_for('registration.unis'))
     return render_template('admin/uniform.html', form = form)
+
+@registration_blueprint.route('/admin/registration')
+@groups_required('admin')
+def registrations():
+    registrations = Registration.query.all()
+    return render_template('admin/registrations.html',
+        registrations = registrations,
+        uni = None
+    )
+
+@registration_blueprint.route('/admin/uni/<int:uni_id>/registrations')
+@groups_required('admin')
+def registrations_by_uni(uni_id):
+    registrations = Registration.query.filter_by(uni_id=uni_id).all()
+    return render_template('admin/registrations.html',
+        registrations = registrations,
+        uni = Uni.query.filter_by(id=uni_id).first()
+    )
+
+@registration_blueprint.route('/admin/registration/<int:reg_id>/delete')
+@groups_required('admin')
+def delete_registration(reg_id):
+    reg = Registration.query.filter_by(id=reg_id).first()
+    flash('Deleted {registration.username}\'s registration'.format(registration=reg))
+    db.session.delete(reg)
+    db.session.commit()
+    return redirect(url_for('registration.registrations'))
