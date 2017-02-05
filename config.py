@@ -18,6 +18,9 @@ class Config:
     LDAP_GROUP_MEMBERS_ATTR = 'member'
     LDAP_READONLY = False
 
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///anmeldung.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
     RECAPTCHA_DATA_ATTRS = {'theme': 'dark'}
     import ldap3
     PASSWORD_HASHING_FUNC = ldap3.HASHED_SALTED_SHA384

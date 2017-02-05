@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-from flask_script import Manager
+from flask_script import Manager, Shell
 from app import create_app, check_sanity
+from app.db import db
 
 app = create_app()
 manager = Manager(app)
@@ -52,6 +53,14 @@ def _query_yes_no(question, default="yes"):
             return valid[choice]
         else:
             print("Please respond with 'yes' or 'no' (or 'y' or 'n').\n")
+
+def make_shell_context():
+    return {
+        'app': app,
+        'db': db,
+    }
+
+manager.add_command('shell', Shell(make_context=make_shell_context))
 
 @manager.command
 def passwd(username, password=None):
@@ -180,6 +189,43 @@ def profile(length=25, profile_dir=None):
     app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[length],
                                       profile_dir=profile_dir)
     app.run()
+
+@manager.command
+def unis():
+    """List unis"""
+    from app.registration.models import Uni
+    for uni in Uni.query.all():
+        print("{uni.name}: {uni.token}".format(uni=uni))
+
+@manager.command
+def adduni(uni_name, token):
+    """Add a uni and a token"""
+    from app.registration.models import Uni
+    uni = Uni(uni_name, token)
+    db.session.add(uni)
+    db.session.commit()
+
+@manager.command
+def deluni(uni_name):
+    """Remove a uni"""
+    from app.registration.models import Uni
+    uni = Uni.query.filter_by(name=uni_name).first()
+    db.session.delete(uni)
+    db.session.commit()
+
+@manager.command
+def set_token(uni_name, token):
+    """Set the token for a uni"""
+    from app.registration.models import Uni
+    uni = Uni.query.filter_by(name=uni_name).first()
+    uni.token = token
+    db.session.add(uni)
+    db.session.commit()
+
+@manager.command
+def initdb():
+    """Initialize a new database"""
+    db.create_all()
 
 if __name__ == "__main__":
     if app.config['MOCKSERVER'] == True:
