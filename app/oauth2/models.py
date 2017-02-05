@@ -1,6 +1,5 @@
 from app.orm import LDAPOrm
-from app.user.models import User
-from flask_login import AnonymousUserMixin
+from app.user.models import User, AnonymousUser
 
 class Grant(object):
     user_id =  None
@@ -18,7 +17,7 @@ class Grant(object):
 
     @property
     def user(self):
-        return User.get(self.user_id) or AnonymousUserMixin()
+        return User.get(self.user_id) or AnonymousUser()
 
     @property
     def scopes(self):
@@ -41,7 +40,7 @@ class Token(object):
 
     @property
     def user(self):
-        return User.get(self.user_id) or AnonymousUserMixin()
+        return User.get(self.user_id) or AnonymousUser()
 
     @property
     def scopes(self):

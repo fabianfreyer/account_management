@@ -1,7 +1,15 @@
-from flask_login import UserMixin
+from flask_login import UserMixin, AnonymousUserMixin
 from flask import current_app
 
 from app.orm import LDAPOrm
+
+class AnonymousUser(AnonymousUserMixin):
+    @property
+    def groups(self):
+        return []
+
+    def is_in_group(self, group):
+        return False
 
 class User(UserMixin, LDAPOrm):
     # This doesn't really work either, so we have to overload _basedn
