@@ -21,6 +21,11 @@ def create_app(profile="default"):
     except:
         pass
 
+    from app.db import db
+    db.init_app(app)
+    db.app = app
+    app.db = db
+
     # Set up sanity checks.
     from . import sanity
     app.sanity_check_modules = [sanity]
@@ -40,6 +45,9 @@ def create_app(profile="default"):
     app.register_blueprint(api_blueprint)
     init_api(app)
 
+    from app.registration import registration_blueprint, init_app as init_reg
+    app.register_blueprint(registration_blueprint)
+    init_reg(app)
 
     return app
 

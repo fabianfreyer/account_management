@@ -8,3 +8,5 @@ __pycache__
 
 slapd.args
 slapd.pid
+
+*.db
