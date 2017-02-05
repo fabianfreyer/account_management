@@ -25,7 +25,6 @@ def add_uni():
     form = UniForm()
     if form.validate_on_submit():
         uni = Uni(form.name.data, form.token.data)
-        print(uni)
         db.session.add(uni)
         try:
             db.session.commit()
