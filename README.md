@@ -37,6 +37,15 @@ commands are supported:
 * `manage.py set_token name token` - set the token for a uni
 * `manage.py profile [length] [profile_dir]` - run the app under a profiler
 
+## OAuth
+
+### Scopes
+
+Scope Name    | Description
+--------------|------------------------------------------
+`uni_list`    | List all of the universities
+`ownUserData` | Get user data of currently logged in user
+
 ## OpenLDAP notes
 
 ### Schema
