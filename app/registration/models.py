@@ -4,7 +4,7 @@ from flask import Blueprint, abort
 class Registration(db.Model):
     id = db.Column(db.Integer(), primary_key = True)
     username = db.Column(db.Text(), unique = True)
-    blob = db.Column(db.LargeBinary())
+    blob = db.Column(db.Text())
     priority = db.Column(db.Integer(), unique = True)
     confirmed = db.Column(db.Boolean())
     uni_id = db.Column(db.Integer(), db.ForeignKey('uni.id'))
