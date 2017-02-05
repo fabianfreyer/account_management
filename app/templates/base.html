@@ -28,6 +28,14 @@
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="{{url_for('oauth2.clients')}}">OAuth2 Applications</a></li>
+          </ul>
+        </li>
+      {% endif %}
+
+      {% if current_user.is_in_group('orga') or current_user.is_admin %}
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Orga <span class="caret"></span></a>
+          <ul class="dropdown-menu">
             <li><a href="{{url_for('registration.unis')}}">Unis</a></li>
             <li><a href="{{url_for('registration.registrations')}}">Registration</a></li>
           </ul>

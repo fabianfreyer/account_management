@@ -4,7 +4,7 @@ from app.db import db
 from .models import Uni, Registration
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from app.user import groups_required
+from app.user import groups_sufficient
 
 from . import api
 
@@ -14,13 +14,13 @@ class UniForm(FlaskForm):
     submit = SubmitField()
 
 @registration_blueprint.route('/admin/uni')
-@groups_required('admin')
+@groups_sufficient('admin', 'orga')
 def unis():
     unis = Uni.query.all()
     return render_template('admin/unis.html', unis = unis)
 
 @registration_blueprint.route('/admin/uni/new', methods=['GET', 'POST'])
-@groups_required('admin')
+@groups_sufficient('admin', 'orga')
 def add_uni():
     form = UniForm()
     if form.validate_on_submit():
@@ -40,7 +40,7 @@ def add_uni():
     return render_template('admin/uniform.html', form = form)
 
 @registration_blueprint.route('/admin/uni/<int:uni_id>/delete')
-@groups_required('admin')
+@groups_sufficient('admin', 'orga')
 def delete_uni(uni_id):
     uni = Uni.query.filter_by(id=uni_id).first()
     flash('Deleted {uni.name}'.format(uni=uni))
@@ -49,7 +49,7 @@ def delete_uni(uni_id):
     return redirect(url_for('registration.unis'))
 
 @registration_blueprint.route('/admin/uni/<int:uni_id>/edit', methods=['GET', 'POST'])
-@groups_required('admin')
+@groups_sufficient('admin', 'orga')
 def edit_uni(uni_id):
     uni = Uni.query.filter_by(id=uni_id).first()
     form = UniForm(name = uni.name, token = uni.token)
@@ -71,7 +71,7 @@ def edit_uni(uni_id):
     return render_template('admin/uniform.html', form = form)
 
 @registration_blueprint.route('/admin/registration')
-@groups_required('admin')
+@groups_sufficient('admin', 'orga')
 def registrations():
     registrations = Registration.query.all()
     return render_template('admin/registrations.html',
@@ -80,7 +80,7 @@ def registrations():
     )
 
 @registration_blueprint.route('/admin/uni/<int:uni_id>/registrations')
-@groups_required('admin')
+@groups_sufficient('admin', 'orga')
 def registrations_by_uni(uni_id):
     registrations = Registration.query.filter_by(uni_id=uni_id).all()
     return render_template('admin/registrations.html',
@@ -89,7 +89,7 @@ def registrations_by_uni(uni_id):
     )
 
 @registration_blueprint.route('/admin/registration/<int:reg_id>/delete')
-@groups_required('admin')
+@groups_sufficient('admin', 'orga')
 def delete_registration(reg_id):
     reg = Registration.query.filter_by(id=reg_id).first()
     flash('Deleted {registration.username}\'s registration'.format(registration=reg))

@@ -25,6 +25,9 @@ def init_app(app):
     from . import sanity
     getattr(app, 'sanity_check_modules', []).append(sanity)
 
+def groups_sufficient(*groups):
+    return groups_required(*groups, require_all=False)
+
 def groups_required(*groups, require_all=True):
     def wrapper(f):
         @wraps(f)
