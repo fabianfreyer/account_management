@@ -12,7 +12,7 @@ from wtforms import StringField, TextField, SubmitField, PasswordField, HiddenFi
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 from wtforms.fields.html5 import EmailField
 
-from . import user_blueprint
+from . import user_blueprint, admin
 
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
@@ -116,3 +116,8 @@ def logout():
             return redirect(next)
         else:
             return redirect(url_for("user.home"))
+
+@user_blueprint.route('/user/edit', methods=['GET', 'POST'])
+@login_required
+def edit_me():
+    return admin.edit_user(current_user.username, False)
