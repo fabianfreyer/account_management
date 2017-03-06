@@ -5,7 +5,7 @@ from functools import wraps
 
 user_blueprint = Blueprint('user', __name__, template_folder='templates/')
 
-from . import models, views
+from . import models
 
 def init_app(app):
 
@@ -43,3 +43,5 @@ def groups_required(*groups, require_all=True):
             abort(403)
         return wrapped
     return wrapper
+
+from . import views
