@@ -44,7 +44,53 @@ def api_register():
         data = registration.blob,
     )
 
-@registration_blueprint.route('/api/order/token')
+@registration_blueprint.route('/api/priorities', methods=['GET', 'POST'])
 @token_auth.login_required
-def validate_token():
-    return jsonify(g.uni.name)
+def api_registration_priorities():
+    """
+    POST: Send a list of confirmed registration IDs in the following format
+          {'confirmed': [id1, id2, id3,...]}
+
+    GET: Print a list of confirmed registrations followed by unconfirmed registrations.
+    """
+    if request.method == 'POST' \
+        and request.headers.get('Content-Type') == 'application/json':
+        req = request.get_json()
+        if not req:
+            abort(403)
+            return ''
+
+        # Get a list of all registrations by this uni
+        registrations = {reg.id: reg for reg in Registration.query.filter_by(uni_id = g.uni.id)}
+
+        # Set the priorities according to the order they are given in in the confirmed list
+        for priority, reg_id in enumerate(req['confirmed']):
+            reg = registrations.pop(reg_id, None)
+            if reg is None:
+                raise ValueError
+            reg.confirmed = True
+            reg.priority = priority
+            db.session.add(reg)
+
+        # Set all remaining priorities as unconfirmed
+        for reg in registrations:
+            reg.confirmed = False
+            reg.priority = None
+            db.session.add(reg)
+
+        db.session.commit()
+        return "OK"
+
+    # GET requiest: return list of registrations ordered by priority
+    registrations = sorted(Registration.query.filter_by(uni_id = g.uni.id), key=lambda r: r.priority)
+
+    def format_reg(reg):
+        return {
+            'reg_id': reg.id,
+            'name': reg.user.full_name,
+            'mail': reg.user.mail,
+            'priority': reg.priority
+        }
+
+    return jsonify([format_reg(reg) for reg in registrations if reg.confirmed]
+            + [format_reg(reg) for reg in registrations if not reg.confirmed])
