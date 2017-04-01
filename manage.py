@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 from flask_script import Manager, Shell
 from app import create_app, check_sanity
+from flask_migrate import Migrate, MigrateCommand
 from app.db import db
 
 app = create_app()
 manager = Manager(app)
+migrate = Migrate(app, db)
 
 @manager.command
 def sanity():
@@ -61,6 +63,7 @@ def make_shell_context():
     }
 
 manager.add_command('shell', Shell(make_context=make_shell_context))
+manager.add_command('db', MigrateCommand)
 
 @manager.command
 def passwd(username, password=None):
