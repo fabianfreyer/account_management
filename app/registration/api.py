@@ -97,7 +97,7 @@ def api_registration_priorities():
         return "OK"
 
     # GET requiest: return list of registrations ordered by priority
-    registrations = sorted(Registration.query.filter_by(uni_id = g.uni.id), key=lambda r: r.priority)
+    registrations = sorted(Registration.query.filter_by(uni_id = g.uni.id), key=lambda r: r.priority or 0)
 
     def format_reg(reg):
         return {
