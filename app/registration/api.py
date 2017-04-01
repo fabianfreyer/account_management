@@ -49,9 +49,24 @@ def api_register():
 def api_registration_priorities():
     """
     POST: Send a list of confirmed registration IDs in the following format
-          {'confirmed': [id1, id2, id3,...]}
+        {
+            "confirmed": [
+                id1, id2, id3,...
+            ]
+        }
 
-    GET: Print a list of confirmed registrations followed by unconfirmed registrations.
+    GET:
+        {
+            "uni": <uni name>,
+            "registrations": [
+                {
+                    "mail": <user email>,
+                    "name": <username>,
+                    "priority": <null or number>,
+                    "reg_id": <registration id>
+                }
+            ]
+        }
     """
     if request.method == 'POST' \
         and request.headers.get('Content-Type') == 'application/json':
@@ -92,5 +107,8 @@ def api_registration_priorities():
             'priority': reg.priority
         }
 
-    return jsonify([format_reg(reg) for reg in registrations if reg.confirmed]
-            + [format_reg(reg) for reg in registrations if not reg.confirmed])
+    return jsonify(
+            uni=g.uni.name,
+            registrations=[format_reg(reg) for reg in registrations if reg.confirmed]
+                         +[format_reg(reg) for reg in registrations if not reg.confirmed]
+        )
