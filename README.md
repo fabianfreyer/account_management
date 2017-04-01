@@ -36,6 +36,9 @@ commands are supported:
 * `manage.py deluni name` - delete a uni
 * `manage.py set_token name token` - set the token for a uni
 * `manage.py profile [length] [profile_dir]` - run the app under a profiler
+* `manage.py db` - Flask-Migrate DB commands:
+  * `manage.py db upgrade` - Run database migrations
+  * `manage.py db migrate` - Create database migrations
 
 ## Permissions
 
