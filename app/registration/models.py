@@ -7,7 +7,7 @@ class Registration(db.Model):
     username = db.Column(db.Text(), unique = True)
     blob = db.Column(db.Text())
     _priority = db.Column('priority', db.Integer())
-    confirmed = db.Column(db.Boolean())
+    _confirmed = db.Column('confirmed', db.Boolean())
     uni_id = db.Column(db.Integer(), db.ForeignKey('uni.id'))
     uni = db.relationship('Uni', backref=db.backref('Registrations', lazy='dynamic', cascade="all, delete-orphan"))
 
@@ -18,6 +18,15 @@ class Registration(db.Model):
     @property
     def is_guaranteed(self):
         return any(map(self.user.is_in_group, current_app.config['ZAPF_GUARANTEED_GROUPS']))
+
+    @property
+    def confirmed(self):
+        return self._confirmed or self.is_guaranteed
+
+    @confirmed.setter
+    def confirmed(self, value):
+        if not self.is_guaranteed:
+            self.confirmed = value
 
     @property
     def priority(self):
