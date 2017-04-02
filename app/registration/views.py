@@ -5,6 +5,7 @@ from .models import Uni, Registration
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from app.user import groups_sufficient
+from app.views import confirm
 
 from . import api
 
@@ -41,11 +42,14 @@ def add_uni():
 
 @registration_blueprint.route('/admin/uni/<int:uni_id>/delete')
 @groups_sufficient('admin', 'orga')
+@confirm(title='Delete university',
+        action='Delete',
+        back='registration.unis')
 def delete_uni(uni_id):
     uni = Uni.query.filter_by(id=uni_id).first()
-    flash('Deleted {uni.name}'.format(uni=uni))
     db.session.delete(uni)
     db.session.commit()
+    flash('Deleted university "{}"'.format(uni.name), 'success')
     return redirect(url_for('registration.unis'))
 
 @registration_blueprint.route('/admin/uni/<int:uni_id>/edit', methods=['GET', 'POST'])
@@ -90,9 +94,12 @@ def registrations_by_uni(uni_id):
 
 @registration_blueprint.route('/admin/registration/<int:reg_id>/delete')
 @groups_sufficient('admin', 'orga')
+@confirm(title='Delete registration',
+        action='Delete registration',
+        back='registration.registrations')
 def delete_registration(reg_id):
     reg = Registration.query.filter_by(id=reg_id).first()
-    flash('Deleted {registration.username}\'s registration'.format(registration=reg))
     db.session.delete(reg)
     db.session.commit()
+    flash('Deleted {}\'s registration'.format(reg.username))
     return redirect(url_for('registration.registrations'))
