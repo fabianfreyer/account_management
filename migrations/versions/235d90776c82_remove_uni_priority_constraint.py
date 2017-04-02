@@ -19,10 +19,10 @@ depends_on = None
 
 
 def upgrade():
-    with op.batch_alter_table('registration', naming_convention = naming_convention) as batch_op:
+    with op.batch_alter_table('registration') as batch_op:
         batch_op.drop_constraint('uq_registration_priority_uni', type_='unique')
 
 
 def downgrade():
-    with op.batch_alter_table('registration', naming_convention = naming_convention) as batch_op:
+    with op.batch_alter_table('registration') as batch_op:
         batch_op.create_unique_constraint('uq_registration_priority_uni', ['priority','uni_id'])
