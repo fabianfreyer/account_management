@@ -26,7 +26,7 @@ class Registration(db.Model):
     @confirmed.setter
     def confirmed(self, value):
         if not self.is_guaranteed:
-            self.confirmed = value
+            self._confirmed = value
 
     @property
     def priority(self):
