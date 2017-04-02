@@ -88,7 +88,7 @@ def api_registration_priorities():
             db.session.add(reg)
 
         # Set all remaining priorities as unconfirmed
-        for reg in registrations:
+        for reg in registrations.values():
             reg.confirmed = False
             reg.priority = None
             db.session.add(reg)
