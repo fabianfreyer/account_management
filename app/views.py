@@ -8,7 +8,7 @@ class ConfirmationForm(FlaskForm):
 
 def confirm(func=None,
         title="Are you sure?",
-        action=None,
+        action="Yes",
         prompt=None,
         text="There is probably no turning back after this...",
         back=None
@@ -30,6 +30,7 @@ def confirm(func=None,
                 'title': title,
                 'action': action,
                 'back': back,
-                'prompt': prompt
+                'prompt': prompt,
+                'text': text
                 })
     return f
