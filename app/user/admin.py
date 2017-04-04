@@ -30,6 +30,16 @@ def list_users():
         users = users
     )
 
+@user_blueprint.route('/admin/user/<string:username>')
+@login_required
+@groups_required('admin')
+def profile(username):
+    user = User.get(username)
+    if not user:
+        flash('Invalid user name!', 'error')
+        return redirect(url_for('user.list_users'))
+    return render_template('admin/profile.html', user=user)
+
 @user_blueprint.route('/admin/user/<string:username>/delete', methods=['GET', 'POST'])
 @login_required
 @confirm(title='Delete User?',

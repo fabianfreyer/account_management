@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.name }}{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="page-header">
+      <h1>{{ user.full_name }} <small>{{ user.username }}</small></h1>
+    </div>
+
+    <div class="panel panel-primary">
+      <div class="panel-heading"><h2>General information</h2></div>
+      <div class="panel-body form-horizontal">
+        <div class="form-group">
+          <label class="col-sm-2 control-label">First name</label>
+          <div class="col-sm10"><p class="form-control-static">{{ user.firstName }}</p></div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Surname</label>
+          <div class="col-sm10"><p class="form-control-static">{{ user.surname }}</p></div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Email</label>
+        <div class="col-sm10"><p class="form-control-static">{% if user.mail %}<a href="mailto:{{ user.mail }}">{{ user.mail }}{% else %}-{% endif %}</a></p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading"><h2>Groups</h2></div>
+        <ul class="list-group">
+        {% for group in user.groups %}
+          <li class="list-group-item">
+            <h4 class="list-group-item-heading">{{ group.group_name }}</h4>
+            <p class="list-group-item-text">{{ group.description }}</p>
+          </li>
+        {% endfor %}
+        </ul>
+    </div>
+  </div>
+{% endblock %}

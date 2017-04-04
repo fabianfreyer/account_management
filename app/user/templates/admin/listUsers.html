@@ -71,7 +71,7 @@ $("#search").keyup(function () {
     <tbody id="users">
       {% for user in users %}
       <tr>
-        <td>{{ user.username }}</td>
+        <td><a href="{{ url_for('user.profile', username=user.username) }}">{{ user.username }}</a></td>
         <td>{{ user.full_name }}</td>
         <td>{{ user.mail }}</td>
         <td>
