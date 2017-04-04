@@ -2,6 +2,10 @@ from flask import render_template, url_for, request
 from flask_wtf import FlaskForm
 from wtforms import SubmitField
 from functools import wraps, partial
+try:
+        from urllib.parse import urlparse, urljoin
+except ImportError:
+        from urlparse import urlparse, urljoin
 
 def is_safe_url(target):
     if not target:
