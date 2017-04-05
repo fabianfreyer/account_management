@@ -6,7 +6,8 @@ from wtforms.validators import DataRequired, Email, EqualTo, Optional
 from wtforms.fields.html5 import EmailField
 from app.views import confirm, is_safe_url
 from . import groups_required, user_blueprint
-from .models import User
+from .models import User, Group
+from ldap3.core.exceptions import LDAPAttributeOrValueExistsResult
 
 class UserEditForm(FlaskForm):
     username = StringField('Username')
@@ -38,7 +39,8 @@ def profile(username):
     if not user:
         flash('Invalid user name!', 'error')
         return redirect(url_for('user.list_users'))
-    return render_template('admin/profile.html', user=user)
+    all_groups = Group.query()
+    return render_template('admin/profile.html', user=user, groups=all_groups)
 
 @user_blueprint.route('/admin/user/<string:username>/delete', methods=['GET', 'POST'])
 @login_required
@@ -99,3 +101,33 @@ def edit_user(username, back_url = None):
         form = form,
         user = user
     )
+
+@user_blueprint.route('/admin/user/<string:username>/join/<string:group_name>')
+@login_required
+@groups_required('admin')
+def join(username, group_name):
+    try:
+        group = Group.get(group_name)
+        if not group:
+            raise AttributeError("group does not exist")
+        group.join(User.get(username))
+        group.save()
+    except LDAPAttributeOrValueExistsResult:
+        flash("{} is already a member of {}".format(username, group_name))
+    except AttributeError:
+        abort(404)
+    return redirect(url_for('user.profile', username=username))
+
+@user_blueprint.route('/admin/user/<string:username>/leave/<string:group_name>', methods=['GET', 'POST'])
+@login_required
+@groups_required('admin')
+@confirm(title='Leave group?',
+        prompt='Are you sure you want to remove this user from the group?',
+        action='Remove')
+def leave(username, group_name):
+    group = Group.get(group_name)
+    if not group:
+        raise AttributeError("group does not exist")
+    group.leave(User.get(username))
+    group.save()
+    return redirect(url_for('user.profile', username=username))
