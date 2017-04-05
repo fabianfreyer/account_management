@@ -139,6 +139,11 @@ def group_page(group_name):
     group = Group.get(group_name)
     if not group:
         flash('Invalid group name!', 'error')
-        # FIXME: list_groups
-        return redirect(url_for('user.list_users'))
+        return redirect(url_for('user.list_groups'))
     return render_template('admin/group/profile.html', group=group)
+
+@user_blueprint.route('/admin/groups')
+@login_required
+@groups_required('admin')
+def list_groups():
+    return render_template('admin/group/list.html', groups=Group.query())
