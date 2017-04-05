@@ -27,7 +27,7 @@ class UserEditForm(FlaskForm):
 @groups_required('admin')
 def list_users():
     users = User.query()
-    return render_template('admin/listUsers.html',
+    return render_template('admin/user/list.html',
         users = users
     )
 
@@ -40,7 +40,7 @@ def profile(username):
         flash('Invalid user name!', 'error')
         return redirect(url_for('user.list_users'))
     all_groups = Group.query()
-    return render_template('admin/profile.html', user=user, groups=all_groups)
+    return render_template('admin/group/profile.html', user=user, groups=all_groups)
 
 @user_blueprint.route('/admin/user/<string:username>/delete', methods=['GET', 'POST'])
 @login_required
@@ -97,7 +97,7 @@ def edit_user(username, back_url = None):
         form.surname.data = user.surname
         form.mail.data = user.mail
 
-    return render_template('admin/editUser.html',
+    return render_template('admin/user/edit.html',
         form = form,
         user = user
     )
@@ -141,4 +141,4 @@ def group_page(group_name):
         flash('Invalid group name!', 'error')
         # FIXME: list_groups
         return redirect(url_for('user.list_users'))
-    return render_template('admin/group.html', group=group)
+    return render_template('admin/group/profile.html', group=group)
