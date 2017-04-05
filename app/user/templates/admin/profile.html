@@ -21,7 +21,11 @@
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label">Email</label>
-        <div class="col-sm10"><p class="form-control-static">{% if user.mail %}<a href="mailto:{{ user.mail }}">{{ user.mail }}{% else %}-{% endif %}</a></p></div>
+          <div class="col-sm10"><p class="form-control-static">{% if user.mail %}<a href="mailto:{{ user.mail }}">{{ user.mail }}{% else %}-{% endif %}</a></p></div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">LDAP DN</label>
+          <div class="col-sm10"><p class="form-control-static">{{ user.dn }}</p></div>
         </div>
       </div>
     </div>
@@ -45,7 +49,8 @@
         <ul class="list-group">
         {% for group in user.groups %}
           <li class="list-group-item">
-            <h4 class="list-group-item-heading clearfix">{{ group.group_name }}
+            <h4 class="list-group-item-heading clearfix">
+              <a href="{{ url_for('user.group_page', group_name=group.group_name)}}">{{ group.group_name }}</a>
               <a class="btn btn-default pull-right"
                  href="{{ url_for('user.leave', username=user.username, group_name=group.group_name) }}">
                 <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>

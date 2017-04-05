@@ -131,3 +131,14 @@ def leave(username, group_name):
     group.leave(User.get(username))
     group.save()
     return redirect(url_for('user.profile', username=username))
+
+@user_blueprint.route('/admin/group/<string:group_name>')
+@login_required
+@groups_required('admin')
+def group_page(group_name):
+    group = Group.get(group_name)
+    if not group:
+        flash('Invalid group name!', 'error')
+        # FIXME: list_groups
+        return redirect(url_for('user.list_users'))
+    return render_template('admin/group.html', group=group)
