@@ -94,7 +94,7 @@ def registrations_by_uni(uni_id):
         uni = Uni.query.filter_by(id=uni_id).first()
     )
 
-@registration_blueprint.route('/admin/registration/<int:reg_id>/delete')
+@registration_blueprint.route('/admin/registration/<int:reg_id>/delete', methods=['GET', 'POST'])
 @groups_sufficient('admin', 'orga')
 @confirm(title='Delete registration',
         action='Delete registration',
