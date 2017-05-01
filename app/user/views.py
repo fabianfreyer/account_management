@@ -103,4 +103,4 @@ def logout():
 @user_blueprint.route('/user/edit', methods=['GET', 'POST'])
 @login_required
 def edit_me():
-    return admin.edit_user(current_user.username, False)
+    return admin.edit_user(current_user.username, url_for('user.edit_me'))
