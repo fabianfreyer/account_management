@@ -6,7 +6,7 @@ def send_password_reset_mail(user):
             sender=current_app.config['MAIL_DEFAULT_SENDER'])
     url = url_for('user.reset_password_finish', username = user.username, token = user.reset_password[0], _external = True)
 
-    msg.body = """Hallo user "{0.username}",
+    msg.body = """Hallo Benutzer "{0.username}",
 
 du kannst dein Passwort auf folgender Website zurücksetzen:
 
