@@ -135,7 +135,7 @@ def reset_password_start():
         return redirect(url_for('user.home'))
     return render_template('reset_password_start.html', form=form)
 
-@user_blueprint.route('/user/<string:username>/reset_password/<string:token>', methods=['GET', 'POST'])
+@user_blueprint.route('/user/reset_password/<string:username>/<string:token>', methods=['GET', 'POST'])
 def reset_password_finish(username, token):
     user = User.get(username)
 
@@ -166,7 +166,7 @@ def confirm_mail_resend():
         return redirect(url_for('user.login'))
     return render_template('resend_confirm_mail.html', form=form)
 
-@user_blueprint.route('/user/<string:username>/confirm_mail/<string:token>', methods=['GET', 'POST'])
+@user_blueprint.route('/user/confirm_mail/<string:username>/<string:token>', methods=['GET', 'POST'])
 def confirm_mail_finish(username, token):
     user = User.get(username)
 
