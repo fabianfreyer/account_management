@@ -19,7 +19,8 @@ class UsernameInUseValidator(object):
 
 class MailInUseValidator(object):
     def __call__(self, form, field):
-        if len(User.query('mail: {}'.format(field.data))) != 0:
+        from ldap3.utils.conv import escape_filter_chars
+        if len(User.query('mail: {}'.format(escape_filter_chars(field.data)))) != 0:
             raise ValidationError('E-Mail address already in use')
 
 from . import user_blueprint, admin
@@ -126,11 +127,12 @@ def edit_me():
 
 @user_blueprint.route('/user/reset_password', methods=['GET', 'POST'])
 def reset_password_start():
+    from ldap3.utils.conv import escape_filter_chars
     form = PasswordResetStartForm()
     if form.validate_on_submit():
         user = User.get(form.user_or_mail.data)
         if not user:
-            users = User.query('mail: {}'.format(form.user_or_mail.data))
+            users = User.query('mail: {}'.format(escape_filter_chars(form.user_or_mail.data)))
             if len(users) > 0:
                 user = users[0]
         if user:

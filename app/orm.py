@@ -78,11 +78,12 @@ class LDAPOrm(object):
 
     @classmethod
     def get(cls, key):
+        from ldap3.utils.conv import escape_filter_chars
         key_attr, _ = cls.keyMapping
         try:
             return cls.query('{key_attr}: {key}'.format(
-                key_attr = key_attr,
-                key = key))[0]
+                key_attr = escape_filter_chars(key_attr),
+                key = escape_filter_chars(key)))[0]
         except IndexError:
             return None
 
