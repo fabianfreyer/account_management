@@ -63,6 +63,9 @@ def edit_user(username, back_url = None):
         return ''
 
     form = UserEditForm()
+    if not form.username.data:
+        form.username.data = user.username
+
     if form.validate_on_submit():
         old_mail = user.mail
 
@@ -87,8 +90,7 @@ def edit_user(username, back_url = None):
         flash('User information changed', 'success')
         return redirect(back_url)
 
-    if not form.username.data:
-        form.username.data = user.username
+    if not form.givenName.data or not form.surname.data or not form.mail.data:
         form.givenName.data = user.firstName
         form.surname.data = user.surname
         form.mail.data = user.mail

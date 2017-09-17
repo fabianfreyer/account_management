@@ -19,6 +19,12 @@ class UsernameInUseValidator(object):
 
 class MailInUseValidator(object):
     def __call__(self, form, field):
+        try:
+            user = User.get(form.username.data)
+            if user and user.mail == field.data:
+                return
+        except AttributeError:
+            pass
         from ldap3.utils.conv import escape_filter_chars
         if len(User.query('mail: {}'.format(escape_filter_chars(field.data)))) != 0:
             raise ValidationError('E-Mail address already in use')
