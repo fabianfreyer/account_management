@@ -86,6 +86,16 @@ MITTAG3_TYPES = {
   'normal': 'Currywurst'
 }
 
+ANREISE_TYPES = {
+  'bus': 'Fernbus',
+  'bahn': 'Zug',
+  'auto': 'Auto',
+  'flug': 'Flugzeug',
+  'fahrrad': 'Fahrrad',
+  'einhorn': 'Einhorn',
+  'uboot': 'U-Boot'
+}
+
 class Winter17ExkursionenOverwriteForm(FlaskForm):
     spitzname = StringField('Spitzname')
     exkursion_overwrite = SelectField('Exkursionen Festlegung', choices=EXKURSIONEN_TYPES_FORM)
@@ -247,9 +257,14 @@ def registration_wise17_report_essen():
             not result_mittag1[mittag1_type] or not result_mittag2[mittag2_type] or not result_mittag3[mittag3_type]):
             return None
         result_essen[essen_type]['registrations'].append(reg)
-        result_mittag1[mittag1_type]['registrations'].append(reg)
-        result_mittag2[mittag2_type]['registrations'].append(reg)
-        result_mittag3[mittag3_type]['registrations'].append(reg)
+        if essen_type == 'vegetarisch' or essen_type == 'vegan':
+            result_mittag1['vegan']['registrations'].append(reg)
+            result_mittag2['vegan']['registrations'].append(reg)
+            result_mittag3['vegan']['registrations'].append(reg)
+        else:
+            result_mittag1[mittag1_type]['registrations'].append(reg)
+            result_mittag2[mittag2_type]['registrations'].append(reg)
+            result_mittag3[mittag3_type]['registrations'].append(reg)
         result_heisse_getraenke[heisse_getraenke]['registrations'].append(reg)
         if getraenkewunsch:
             result_getraenkewunsch.append(reg)
@@ -321,7 +336,7 @@ def registration_wise17_report_spitznamen():
 @groups_sufficient('admin', 'orga')
 def registration_wise17_details_registration(reg_id):
     reg = Registration.query.filter_by(id=reg_id).first()
-    form = Sommer17ExkursionenOverwriteForm()
+    form = Winter17ExkursionenOverwriteForm()
     if form.validate_on_submit():
         data = reg.data
         old_spitzname = data['spitzname']
@@ -346,9 +361,13 @@ def registration_wise17_details_registration(reg_id):
         form = form,
         EXKURSIONEN_TYPES = EXKURSIONEN_TYPES,
         ESSEN_TYPES = ESSEN_TYPES,
+        MITTAG1_TYPES = MITTAG1_TYPES,
+        MITTAG2_TYPES = MITTAG2_TYPES,
+        MITTAG3_TYPES = MITTAG3_TYPES,
         TSHIRTS_TYPES = TSHIRTS_TYPES,
-        ZELTEN_TYPES = ZELTEN_TYPES,
-        HEISSE_GETRAENKE_TYPES = HEISSE_GETRAENKE_TYPES
+        SCHLAFEN_TYPES = SCHLAFEN_TYPES,
+        HEISSE_GETRAENKE_TYPES = HEISSE_GETRAENKE_TYPES,
+        ANREISE_TYPES = ANREISE_TYPES
     )
 
 @registration_blueprint.route('/admin/registration/report/wise17/stimmkarten/latex')
