@@ -342,6 +342,8 @@ def registration_wise17_details_registration(reg_id):
         old_spitzname = data['spitzname']
         if 'exkursion_overwrite' in reg.data:
             old_overwrite = data['exkursion_overwrite']
+        else:
+            old_overwrite = 'nooverwrite'
         data['spitzname'] = form.spitzname.data
         data['exkursion_overwrite'] = form.exkursion_overwrite.data
         reg.data = data
@@ -349,7 +351,7 @@ def registration_wise17_details_registration(reg_id):
         db.session.commit()
         if old_spitzname != form.spitzname.data:
             return redirect(url_for('registration.registration_wise17_report_spitznamen'))
-        elif old_overwrite and old_overwrite != form.exkursion_overwrite.data:
+        elif old_overwrite != form.exkursion_overwrite.data:
             return redirect(url_for('registration.registration_wise17_report_exkursionen'))
         else:
             return redirect(url_for('registration.registration_wise17_details_registration', reg_id = reg_id))
