@@ -11,7 +11,7 @@ import csv
 EXKURSIONEN_TYPES = {
   'egal': ('ist mir egal', -1, 'Egal'),
   'keine': ('keine exkursion', -1, 'Keine'),
-  'ipg': ('IPG Photonics', 30, 'IPG'),
+  'ipg': ('IPG Photonics', 20, 'IPG'),
   'nch': ('Neurochirurgie', 0, 'Neurochirurgie'),
   'km': ('Krueckemeyer Klebstoffe', 20, 'Krueckemeyer'),
   'ejot': ('EJOT Schrauben', 20, 'EJOT'),
@@ -20,7 +20,7 @@ EXKURSIONEN_TYPES = {
   'fokos': ('FoKoS', 20, 'FoKoS'),
   'bwf': ('Bergwerksfuehrung', 30, 'Bergwerk'),
   'stf': ('Stadtführung', 20, 'Stadtführung'),
-  'wandern': ('Wandern', 20, 'Wandern'),
+  'wandern': ('Wandern', 30, 'Wandern'),
   'lan': ('LAN Party', 0, 'LAN Party'),
   'nospace': ('Konnte keiner Exkursion zugeordnet werden', -1, 'Noch offen'),
 }
