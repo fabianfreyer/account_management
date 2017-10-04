@@ -128,24 +128,62 @@ def wise17_calculate_exkursionen(registrations):
         got_slot = False
         for field_index, field in enumerate(EXKURSIONEN_FIELD_NAMES):
             exkursion_selected = reg.data[field]
-            if not result[exkursion_selected]:
-                return None
-            if result[exkursion_selected]['space'] == -1 or result[exkursion_selected]['free'] > 0:
-                result[exkursion_selected]['registrations'].append((reg, field_index))
-                result[exkursion_selected]['free'] -= 1
+            if exkursion_selected == 'vbsi':
+                result['vbsi']['registrations'].append((reg, field_index))
+                result['vbsi']['free'] -= 1
                 got_slot = True
                 break;
+            elif exkursion_selected == 'ejot':
+                result['ejot']['registrations'].append((reg, field_index))
+                result['ejot']['free'] -= 1
+                got_slot = True
+                break;
+            elif exkursion_selected == 'km':
+                result['km']['registrations'].append((reg, field_index))
+                result['km']['free'] -= 1
+                got_slot = True
+                break;
+        if not got_slot:
+            for field_index, field in enumerate(EXKURSIONEN_FIELD_NAMES):
+                exkursion_selected = reg.data[field]
+                if not result[exkursion_selected]:
+                    return None
+                if result[exkursion_selected]['space'] == -1 or result[exkursion_selected]['free'] > 0:
+                    result[exkursion_selected]['registrations'].append((reg, field_index))
+                    result[exkursion_selected]['free'] -= 1
+                    got_slot = True
+                    break;
         if not got_slot:
             result['nospace']['registrations'].append((reg, len(EXKURSIONEN_FIELD_NAMES) + 1))
     for reg in regs_later:
         for field_index, field in enumerate(EXKURSIONEN_FIELD_NAMES):
             exkursion_selected = reg.data[field]
-            if not result[exkursion_selected]:
-                return None
-            if result[exkursion_selected]['space'] == -1 or result[exkursion_selected]['free'] > 0:
-                result[exkursion_selected]['registrations'].append((reg, field_index))
-                result[exkursion_selected]['free'] -= 1
+            if exkursion_selected == 'vbsi':
+                result['vbsi']['registrations'].append((reg, field_index))
+                result['vbsi']['free'] -= 1
+                got_slot = True
                 break;
+            elif exkursion_selected == 'ejot':
+                result['ejot']['registrations'].append((reg, field_index))
+                result['ejot']['free'] -= 1
+                got_slot = True
+                break;
+            elif exkursion_selected == 'km':
+                result['km']['registrations'].append((reg, field_index))
+                result['km']['free'] -= 1
+                got_slot = True
+                break;
+        if not got_slot:
+            for field_index, field in enumerate(EXKURSIONEN_FIELD_NAMES):
+                exkursion_selected = reg.data[field]
+                if not result[exkursion_selected]:
+                    return None
+                if result[exkursion_selected]['space'] == -1 or result[exkursion_selected]['free'] > 0:
+                    result[exkursion_selected]['registrations'].append((reg, field_index))
+                    result[exkursion_selected]['free'] -= 1
+                    break;
+        if not got_slot:
+            result['nospace']['registrations'].append((reg, len(EXKURSIONEN_FIELD_NAMES) + 1))
     return result
 
 @registration_blueprint.route('/admin/registration/report/wise17')
