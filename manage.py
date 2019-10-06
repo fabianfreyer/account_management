@@ -8,6 +8,7 @@ app = create_app()
 manager = Manager(app)
 migrate = Migrate(app, db)
 
+
 @manager.command
 def sanity():
     """
@@ -16,15 +17,18 @@ def sanity():
     """
     check_sanity()
 
+
 def _getpass():
     """
     Simple getpass wrapper that asks for a password twice.
     """
     from getpass import getpass
-    password = getpass('New password: ')
-    if (getpass('Repeat password: ') != password):
+
+    password = getpass("New password: ")
+    if getpass("Repeat password: ") != password:
         raise Exception("Paswords were not equal")
     return password
+
 
 def _query_yes_no(question, default="yes"):
     """Ask a yes/no question via raw_input() and return their answer.
@@ -36,8 +40,7 @@ def _query_yes_no(question, default="yes"):
 
     The "answer" return value is True for "yes" or False for "no".
     """
-    valid = {"yes": True, "y": True, "ye": True,
-             "no": False, "n": False}
+    valid = {"yes": True, "y": True, "ye": True, "no": False, "n": False}
     if default is None:
         prompt = " [y/n] "
     elif default == "yes":
@@ -49,21 +52,21 @@ def _query_yes_no(question, default="yes"):
 
     while True:
         choice = input(question + prompt).lower()
-        if default is not None and choice == '':
+        if default is not None and choice == "":
             return valid[default]
         elif choice in valid:
             return valid[choice]
         else:
             print("Please respond with 'yes' or 'no' (or 'y' or 'n').\n")
 
-def make_shell_context():
-    return {
-        'app': app,
-        'db': db,
-    }
 
-manager.add_command('shell', Shell(make_context=make_shell_context))
-manager.add_command('db', MigrateCommand)
+def make_shell_context():
+    return {"app": app, "db": db}
+
+
+manager.add_command("shell", Shell(make_context=make_shell_context))
+manager.add_command("db", MigrateCommand)
+
 
 @manager.command
 def passwd(username, password=None):
@@ -71,6 +74,7 @@ def passwd(username, password=None):
     Change a user's password
     """
     from app.user.models import User
+
     try:
         user = User.get(username)
     except LookupError:
@@ -80,13 +84,16 @@ def passwd(username, password=None):
         user.save()
         return user
 
+
 @manager.command
 def create_user(uid, givenName, sn, mail=None, password=None):
     """
     Create a user
     """
     from app.user.models import User
+
     return User.create(uid, givenName, sn, password or _getpass(), mail)
+
 
 @manager.command
 def delete_user(uid):
@@ -95,9 +102,11 @@ def delete_user(uid):
     """
     if _query_yes_no('Are you sure to delete user "{}"?'.format(uid), None):
         from app.user.models import User
+
         return User.get(uid).delete()
     else:
-        print('Aborting...')
+        print("Aborting...")
+
 
 @manager.command
 def users():
@@ -105,9 +114,11 @@ def users():
     List users
     """
     from app.user.models import User
+
     users = User.query()
     for user in users:
-        print('{0.username}: {0.full_name} <{0.mail}>'.format(user))
+        print("{0.username}: {0.full_name} <{0.mail}>".format(user))
+
 
 @manager.command
 def groups():
@@ -115,16 +126,20 @@ def groups():
     List groups
     """
     from app.user.models import Group
+
     groups = Group.query()
     for group in groups:
-        print('{0.group_name}: {0.description}'.format(group))
+        print("{0.group_name}: {0.description}".format(group))
+
 
 @manager.command
 def members(group_id):
     from app.user.models import Group
+
     group = Group.get(group_id)
     for member in group.members:
-        print('{0.username}: {0.full_name}'.format(member))
+        print("{0.username}: {0.full_name}".format(member))
+
 
 @manager.command
 def join(username, group_name):
@@ -133,6 +148,7 @@ def join(username, group_name):
     """
     from app.user.models import User, Group
     from ldap3.core.exceptions import LDAPAttributeOrValueExistsResult
+
     try:
         group = Group.get(group_name)
         if not group:
@@ -144,17 +160,20 @@ def join(username, group_name):
     except AttributeError:
         print("User or Group does not exist")
 
+
 @manager.command
 def remove(username, group_name):
     """
     Remove a user from a group
     """
     from app.user.models import User, Group
+
     group = Group.get(group_name)
     if not group:
         raise AttributeError("group does not exist")
     group.leave(User.get(username))
     group.save()
+
 
 @manager.command
 def delgroup(group_name):
@@ -162,7 +181,9 @@ def delgroup(group_name):
     Delete a group
     """
     from app.user.models import Group
+
     Group.get(group_name).delete()
+
 
 @manager.command
 def newgroup(group_name):
@@ -170,24 +191,28 @@ def newgroup(group_name):
     Create a group
     """
     from app.user.models import User, Group
-    g = Group(name = group_name)
-    g.description = input('Enter a description of the group '
-                          '(or leave blank for none): ') or None
-    print('Enter a list of initial user names to be added to the group, one on '
-          'each line, ending with an empty line: ')
+
+    g = Group(name=group_name)
+    g.description = (
+        input("Enter a description of the group " "(or leave blank for none): ") or None
+    )
+    print(
+        "Enter a list of initial user names to be added to the group, one on "
+        "each line, ending with an empty line: "
+    )
     users = []
     while True:
-        username = input('> ')
+        username = input("> ")
         if not username:
             break
 
         user = User.get(username)
         if not user:
-            print('Could not find user: {}'.format(username))
+            print("Could not find user: {}".format(username))
             continue
 
         if user in users:
-            print('Heard you the first time.')
+            print("Heard you the first time.")
             continue
 
         users.append(user)
@@ -195,57 +220,73 @@ def newgroup(group_name):
     g.members = users
     g.save()
 
+
 @manager.command
 def profile(length=25, profile_dir=None):
     """Start the application under the code profiler."""
     from werkzeug.contrib.profiler import ProfilerMiddleware
-    app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[length],
-                                      profile_dir=profile_dir)
+
+    app.wsgi_app = ProfilerMiddleware(
+        app.wsgi_app, restrictions=[length], profile_dir=profile_dir
+    )
     app.run()
+
 
 @manager.command
 def unis():
     """List unis"""
     from app.registration.models import Uni
+
     for uni in Uni.query.all():
         print("{uni.name}: {uni.token}".format(uni=uni))
+
 
 @manager.command
 def adduni(uni_name, token):
     """Add a uni and a token"""
     from app.registration.models import Uni
+
     uni = Uni(uni_name, token)
     db.session.add(uni)
     db.session.commit()
+
 
 @manager.command
 def deluni(uni_name):
     """Remove a uni"""
     from app.registration.models import Uni
+
     uni = Uni.query.filter_by(name=uni_name).first()
     db.session.delete(uni)
     db.session.commit()
+
 
 @manager.command
 def set_token(uni_name, token):
     """Set the token for a uni"""
     from app.registration.models import Uni
+
     uni = Uni.query.filter_by(name=uni_name).first()
     uni.token = token
     db.session.add(uni)
     db.session.commit()
+
 
 @manager.command
 def initdb():
     """Initialize a new database"""
     db.create_all()
 
+
 if __name__ == "__main__":
-    if app.config['MOCKSERVER'] == True:
+    if app.config["MOCKSERVER"] == True:
         from unittest import mock
         from flask_ldap3_login import LDAP3LoginManager
         from test.MockLDAP import _mock_connection
-        with mock.patch.object(LDAP3LoginManager, '_make_connection', new=_mock_connection):
+
+        with mock.patch.object(
+            LDAP3LoginManager, "_make_connection", new=_mock_connection
+        ):
             app.logger.info("using mocked ldap")
             manager.run()
     else:
