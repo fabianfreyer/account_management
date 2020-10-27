@@ -1,7 +1,6 @@
-from flask import Blueprint
+from flask import Blueprint, current_app
 from flask_oauthlib.provider import OAuth2Provider
-from flask_cache import Cache
-from werkzeug.contrib.cache import SimpleCache
+from flask_caching import Cache
 from .models import Client, Grant, Token
 from flask_login import current_user
 from datetime import datetime, timedelta
@@ -9,8 +8,6 @@ from datetime import datetime, timedelta
 oauth2_blueprint = Blueprint("oauth2", __name__, template_folder="templates/")
 oauth = OAuth2Provider()
 
-# FIXME: Use a memcached in production.
-cache = SimpleCache()
 
 from . import views
 
@@ -18,6 +15,7 @@ from . import views
 def init_app(app):
     oauth.init_app(app)
     app.oauth2_provider = oauth
+    app.cache = Cache(app)
 
     # Set up sanity checks.
     from . import sanity
@@ -34,7 +32,9 @@ def load_client(client_id):
 
 @oauth.grantgetter
 def load_grant(client_id, code):
-    return cache.get("grant/{client_id}/{code}".format(client_id=client_id, code=code))
+    return current_app.cache.get(
+        "grant/{client_id}/{code}".format(client_id=client_id, code=code)
+    )
 
 
 @oauth.grantsetter
@@ -49,7 +49,7 @@ def save_grant(client_id, code, request, *args, **kwargs):
         user_id=current_user.get_id(),
         expires=expires,
     )
-    cache.set(
+    current_app.cache.set(
         "grant/{client_id}/{code}".format(client_id=client_id, code=code["code"]), grant
     )
 
@@ -59,9 +59,11 @@ def save_grant(client_id, code, request, *args, **kwargs):
 @oauth.tokengetter
 def load_token(access_token=None, refresh_token=None):
     if access_token:
-        return cache.get("token/access/{token}".format(token=access_token))
+        return current_app.cache.get("token/access/{token}".format(token=access_token))
     elif refresh_token:
-        return cache.get("token/refresh/{token}".format(token=refresh_token))
+        return current_app.cache.get(
+            "token/refresh/{token}".format(token=refresh_token)
+        )
 
 
 @oauth.tokensetter
@@ -78,7 +80,7 @@ def save_token(token, request, *args, **kwargs):
         client_id=request.client.client_id,
         user_id=request.user.get_id(),
     )
-    cache.set("token/access/{tok}".format(tok=token["access_token"]), tok)
-    cache.set("token/refresh/{tok}".format(tok=token["refresh_token"]), tok)
+    current_app.cache.set("token/access/{tok}".format(tok=token["access_token"]), tok)
+    current_app.cache.set("token/refresh/{tok}".format(tok=token["refresh_token"]), tok)
 
     return tok

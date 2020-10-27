@@ -37,6 +37,8 @@ class Config:
     MAIL_DEFAULT_SENDER = "topf@zapf.in"
     MAIL_NEXT_ZAPF_ORGA = "topf@zapf.in"
 
+    CACHE_TYPE = "simple"
+
     RECAPTCHA_DATA_ATTRS = {"theme": "dark"}
     import ldap3
 
