@@ -44,6 +44,8 @@ class Config:
 
     PASSWORD_HASHING_FUNC = ldap3.HASHED_SALTED_SHA384
 
+    CONFIRM_MAIL_TOKEN_LENGTH = 20
+
     @staticmethod
     def init_app(app):
         pass
@@ -65,6 +67,7 @@ class DevelopmentConfig(Config):
 
     PASSWORD_HASHING_FUNC = ldap3.HASHED_SALTED_SHA
     # MOCKSERVER = True
+    MAIL_SUPPRESS_SEND = True
 
 
 class ProductionConfig(Config):
